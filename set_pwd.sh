@@ -8,8 +8,14 @@ if ($DEBUG) then
 	repeat $%msg echo -n =
 	echo
 endif
+
+# usage
+if ($# < 1) then
+	echo Usage: $0:t path
+	exit 1
+endif
 	
-echo $< > /tmp/cg_pwd
+echo $1 > /tmp/cg_pwd
 	
 if ($DEBUG) then
 	echo "Done."
