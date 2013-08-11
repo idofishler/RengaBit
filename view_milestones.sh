@@ -70,10 +70,10 @@ mkdir "$mls_dir"
 
 # copy current file or folder to milestones folder
 if ($folder) then
-	cp -r "$file_path" "${mls_dir}/${name}_current"
+	cp -a "$file_path" "${mls_dir}/${name}_current"
 else
-	cp "$file_path" "${mls_dir}" # for later use (icon issue)
-	cp "$file_path" "${mls_dir}/${name}_current.${ext}"
+	cp -a "$file_path" "${mls_dir}" # for later use (icon issue)
+	cp -a "$file_path" "${mls_dir}/${name}_current.${ext}"
 endif
 
 
@@ -93,7 +93,7 @@ foreach r ($revs)
 	else
 		set new_file_name = "${mls_dir}/${name}_${i}.${ext}"
 	endif
-	cp -r "$file_path" $new_file_name
+	cp -a "$file_path" $new_file_name
 
 	@ i++
 end
