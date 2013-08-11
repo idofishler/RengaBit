@@ -2,7 +2,7 @@
 
 set DEBUG = 1
 
-# get script runnig dir
+# get script running dir
 set cg_folder = ~/.cg
 
 # icon config
@@ -18,13 +18,13 @@ if ($DEBUG) then
 endif
 
 # usage
-if ($# < 1) then
-	echo Usage: $0:t commit_msg
+if ($# < 2) then
+	echo Usage: $0:t file_path commit_msg
 	exit 1
 endif
 
-set commit_msg = "$1"
-set file_path = `cat /tmp/cg_pwd`
+set commit_msg = "$2"
+set file_path = "$1"
 set file_name = "$file_path:t"
 
 # folder handling
@@ -61,11 +61,8 @@ endif
 if ($folder) then
 	# add all file under this folder
 	git add .
-	
-	# add only files that are tracked and has been modified
-	#set git_msg = `git diff --name-only --diff-filter=M | xargs git add`
-	
 else
+	# add only this file
 	git add $file_path
 endif
 	
@@ -78,6 +75,7 @@ set git_msg = `git commit -m "$commit_msg"`
 if ($status) then
 	echo "commit issue"
 	echo $git_msg
+	exit 0 # suppress this error for now
 endif
 
 exit 0
