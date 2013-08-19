@@ -28,7 +28,7 @@ set file_path = "$1"
 set file_name = "$file_path:t"
 
 # folder handling
-if (-d $file_path) then
+if (-d "$file_path") then
 	if ($DEBUG) then
 		echo "$file_name is a directory"
 	endif
@@ -49,7 +49,7 @@ if ($DEBUG) then
 	echo folder_path: $folder_path
 endif
 
-cd $folder_path
+cd "$folder_path"
 
 # check if a git repo exists
 git status
@@ -63,7 +63,7 @@ if ($folder) then
 	git add .
 else
 	# add only this file
-	git add $file_path
+	git add "$file_path"
 endif
 	
 # change the file/folder's icon

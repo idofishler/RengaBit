@@ -1,4 +1,4 @@
-#! /bin/tcsh -x
+#! /bin/tcsh
 
 set DEBUG = 1
 
@@ -18,7 +18,7 @@ endif
 set file_path = "$1"
 
 # folder handling
-if (-d $file_path) then
+if (-d "$file_path") then
 	set file_name = "$file_path"
 	if ($DEBUG) then
 		echo "$file_name is a directory"
@@ -44,7 +44,7 @@ if ($DEBUG) then
 	echo folder_path: $folder_path
 endif
 
-cd $folder_path
+cd "$folder_path"
 
 # check if a git repo exists
 git status
@@ -81,7 +81,7 @@ endif
 git stash
 
 # find revision for this file where the file has been touched
-set revs = ( `git log --reverse --format=oneline $file_path | cut -d" " -f1` )
+set revs = ( `git log --reverse --format=oneline "$file_path" | cut -d" " -f1` )
 set i = 1;
 foreach r ($revs)
 	# get this file revision
@@ -93,7 +93,7 @@ foreach r ($revs)
 	else
 		set new_file_name = "${mls_dir}/${name}_${i}.${ext}"
 	endif
-	cp -a "$file_path" $new_file_name
+	cp -a "$file_path" "$new_file_name"
 
 	@ i++
 end
