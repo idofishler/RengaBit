@@ -95,6 +95,10 @@ foreach r ($revs)
 	endif
 	cp -a "$file_path" "$new_file_name"
 
+	# modifiy the file comment acorrding to it's commit message
+	set comment = `git log --format=oneline -n 1 $r -- "$file_path" | cut -d" " -f2-`
+	~/.cg/change_file_comment "$new_file_name" "$comment"
+
 	@ i++
 end
 

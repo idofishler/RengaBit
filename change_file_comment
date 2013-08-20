@@ -1,0 +1,13 @@
+#! /usr/bin/osascript
+
+on run input
+	-- geting inputs
+	set file_path to first item of input
+	set cmt_msg to second item of input
+	
+	tell application "Finder"
+		set comment of (POSIX file file_path as alias) to cmt_msg
+	end tell
+	
+	return input
+end run
