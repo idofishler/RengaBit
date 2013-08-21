@@ -1,13 +1,7 @@
 #! /bin/tcsh
 
-set DEBUG = 1
-
-if ($DEBUG) then
-	set msg = "debug is ON"
-	echo $msg
-	repeat $%msg echo -n =
-	echo
-endif
+# get script running dir
+set cg_folder = ~/.cg
 
 # usage
 if ($# < 1) then
@@ -20,16 +14,10 @@ set file_path = "$1"
 # folder handling
 if (-d "$file_path") then
 	set file_name = "$file_path"
-	if ($DEBUG) then
-		echo "$file_name is a directory"
-	endif
 	set folder_path = "$file_path"
 	set folder = 1
 else
 	set file_name = "$file_path:t"
-	if ($DEBUG) then
-		echo "$file_name is a file"
-	endif
 	set folder_path = "$file_path:h"
 	set folder = 0
 endif
@@ -37,30 +25,19 @@ endif
 set ext = "$file_path:e"
 set name = "$file_path:t:r"
 
-if ($DEBUG) then
-	echo file_path: $file_path
-	echo file_name: $name
-	echo file_ext: $ext
-	echo folder_path: $folder_path
-endif
-
 cd "$folder_path"
 
 # check if a git repo exists
 git status
 if ($status) then
-	if ($DEBUG) then
-		echo "No git repo here!"
-	endif
+	echo "No git repo here!"
 	exit 1
 endif
 
 # if this file is being not monitored
 set files = `git ls-files "$file_path" --error-unmatch`
 if ($status) then
-	if ($DEBUG) then
-		echo "This file(s) is(are) not being monitored!"
-	endif
+	echo "This file(s) is(are) not being monitored!"
 	exit 2
 endif
 
@@ -97,7 +74,7 @@ foreach r ($revs)
 
 	# modifiy the file comment acorrding to it's commit message
 	set comment = `git log --format=oneline -n 1 $r -- "$file_path" | cut -d" " -f2-`
-	~/.cg/change_file_comment "$new_file_name" "$comment"
+	${cg_folder}/change_file_comment "$new_file_name" "$comment"
 
 	@ i++
 end
