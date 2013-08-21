@@ -52,7 +52,11 @@ set git_msg = `git commit -m "$commit_msg"`
 if ($status) then
 	echo "commit issue"
 	echo $git_msg
+	${cg_folder}/alert "There were no changes since last milestone."
 	exit 0 # suppress this error for now
 endif
+
+# modify the file comments
+${cg_folder}/change_file_comment "$file_path" "$commit_msg"
 
 exit 0

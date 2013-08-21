@@ -31,14 +31,16 @@ cd "$folder_path"
 git status
 if ($status) then
 	echo "No git repo here!"
-	exit 1
+	${cg_folder}/alert "There are no milestones for this file"
+	exit 0
 endif
 
 # if this file is being not monitored
 set files = `git ls-files "$file_path" --error-unmatch`
 if ($status) then
 	echo "This file(s) is(are) not being monitored!"
-	exit 2
+	${cg_folder}/alert "There are no milestones for this file"
+	exit 0
 endif
 
 # prepare a dir to put all milestones
@@ -75,6 +77,10 @@ foreach r ($revs)
 	# modifiy the file comment acorrding to it's commit message
 	set comment = `git log --format=oneline -n 1 $r -- "$file_path" | cut -d" " -f2-`
 	${cg_folder}/change_file_comment "$new_file_name" "$comment"
+ 
+	# modify the "Date modified" attribute of the file
+	set date = `git log $r -n 1 --format=%ci -- "$file_path" | sed 's/\([0-9]*\)-\([0-9]*\)-\([0-9]*\) \([0-9]*\):\([0-9]*\):\([0-9]*\) .*/\1\2\3\4\5.\6/'`
+	touch -t $date "$new_file_name"
 
 	@ i++
 end
