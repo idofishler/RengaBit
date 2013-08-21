@@ -76,7 +76,8 @@ foreach r ($revs)
 
 	# modifiy the file comment acorrding to it's commit message
 	set comment = `git log --format=oneline -n 1 $r -- "$file_path" | cut -d" " -f2-`
-	${cg_folder}/change_file_comment "$new_file_name" "$comment"
+	set commiter_name = `git log $r -n 1 --format=%cn -- "$file_path"`
+	${cg_folder}/change_file_comment "$new_file_name" "${commiter_name}: $comment"
  
 	# modify the "Date modified" attribute of the file
 	set date = `git log $r -n 1 --format=%ci -- "$file_path" | sed 's/\([0-9]*\)-\([0-9]*\)-\([0-9]*\) \([0-9]*\):\([0-9]*\):\([0-9]*\) .*/\1\2\3\4\5.\6/'`
