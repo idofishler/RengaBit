@@ -4,6 +4,10 @@
 set cg_folder = ~/.cg
 set meta_file_name = ".cg"
 
+# icon config
+set icon_png = "${cg_folder}/file-icon.png"
+set change_icon = "${cg_folder}/change_icon.sh"
+
 # usage
 if ($# < 1) then
 	echo Usage: $0:t file_path
@@ -35,5 +39,11 @@ set commit_msg = `git log $rev -n 1 --format=%s -- "$org_file_path"`
 set commit_msg = "Revert to: $commit_msg"
 git commit -m "$commit_msg" -- "$org_file_path"
 ${cg_folder}/change_file_comment "$org_file_path" "$commit_msg"
+
+# change the file/folder's icon
+"$change_icon" "$org_file_path" "$icon_png"
+
+# delete the milestones folder
 rm -rf "$mls_folder"
+
 exit 0

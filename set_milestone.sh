@@ -42,9 +42,8 @@ else
 	# add only this file
 	git add "$file_path"
 endif
-	
+
 # change the file/folder's icon
-# TODO: check if needed
 "$change_icon" "$file_path" "$icon_png"
 
 # git commit
