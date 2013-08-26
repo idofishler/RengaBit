@@ -1,0 +1,21 @@
+Metadata-Version: 1.0
+Name: pymktorrent
+Version: 0.3
+Summary: Torrent metadata (.torrent) creation utility and library
+Home-page: http://labs.lericson.se/experiments/pymktorrent/
+Author: Ludvig Ericson
+Author-email: ludvig.ericson@gmail.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: Intended Audience :: Information Technology
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Communications :: File Sharing
+Classifier: Topic :: Software Development :: Libraries
+Classifier: Topic :: Utilities
