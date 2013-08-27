@@ -3,9 +3,7 @@
 # get script running dir
 set cg_folder = ~/.cg
 set traker_url = "http://tracker.yify-torrents.com/announce"
-set len = 16384 # piece length in bytes
-set comment = "Created by Renga"
-set maketorrent = ${cg_folder}/pymktorrent-0.3/pymktorrent/maketorrent.py
+set maketorrent = ${cg_folder}/BitTorrent/btmakemetafile.py
 set send_mail = ${cg_folder}/send_mail_with_file.py
 
 # usage
@@ -16,7 +14,7 @@ endif
 
 set recipient_email = "$1"
 set file_path = "$2"
-set sender_email = "idofishler@gmail.com"
+set sender_email = "mailer@rengabit.com"
 
 set file_name = "$file_path:t"
 set renga_folder = "$file_path:h"/.renga
@@ -28,7 +26,7 @@ if (! -e "$renga_folder") then
 endif
 
 # create the torrent file
-python $maketorrent -a $traker_url -l $len -c "$comment" $file_path $renga_file
+$maketorrent $file_path $traker_url
 
 # send it via mail
 $send_mail -f "$renga_file" -s "$sender_email" -r "$recipient_email"

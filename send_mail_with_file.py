@@ -85,14 +85,19 @@ must be running an SMTP server.
         encoders.encode_base64(msg)
     # Set the filename parameter
     msg.add_header('Content-Disposition', 'attachment', filename=filename)
+    # add msg text to body
+    text = 'Hi!\nHow are you?\n\n{0} would like to share this Renga with you\nIf you don\'t have RengaBit app installed you can get it at rengabit.com\n\nGood day :)'.format(opts.sender)
+    msg_text = MIMEText(text, 'plain')
+    outer.attach(msg_text)
+    
     outer.attach(msg)
     # Now send the message
     composed = outer.as_string()
 
-    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s = smtplib.SMTP('smtp.live.com', 587)
     s.ehlo()
     s.starttls()
-    s.login('idofishler@gmail.com', 'aA210983!')
+    s.login('rengabit@outlook.com', 'Atzmon83')
     s.sendmail(opts.sender, opts.recipients, composed)
     s.quit()
 

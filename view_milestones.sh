@@ -85,7 +85,7 @@ endif
 git stash
 
 # find revision for this file where the file has been touched
-set revs = ( `git log --reverse --format=oneline "$file_path" | cut -d" " -f1` )
+set revs = ( `git log --reverse --format=%H "$file_path"` )
 set i = 1;
 foreach r ($revs)
 	# get this file revision
@@ -100,7 +100,7 @@ foreach r ($revs)
 	cp -a "$file_path" "$new_file_name"
 
 	# modifiy the file comment acorrding to it's commit message
-	set comment = `git log --format=oneline -n 1 $r -- "$file_path" | cut -d" " -f2-`
+	set comment = `git log --format=%s -n 1 $r -- "$file_path"`
 	set commiter_name = `git log $r -n 1 --format=%cn -- "$file_path"`
 	${cg_folder}/change_file_comment "$new_file_name" "${commiter_name}: $comment"
  
