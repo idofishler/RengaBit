@@ -2,7 +2,7 @@
 
 # get script running dir
 set cg_folder = ~/.cg
-set traker_url = "http://tracker.yify-torrents.com/announce"
+set traker_url = "http://announce.torrentsmd.com:6969/announce"
 set maketorrent = ${cg_folder}/BitTorrent/btmakemetafile.py
 set send_mail = ${cg_folder}/send_mail_with_file.py
 
@@ -29,6 +29,9 @@ endif
 $maketorrent $file_path $traker_url
 
 # send it via mail
-$send_mail -f "$renga_file" -s "$sender_email" -r "$recipient_email"
+#$send_mail -f "$renga_file" -s "$sender_email" -r "$recipient_email"
+
+# sarat sharing the file
+
 
 exit 0

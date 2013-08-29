@@ -6,7 +6,7 @@ set meta_file_name = ".cg"
 
 # icon config
 set icon_png = "${cg_folder}/file-icon.png"
-set change_icon = "${cg_folder}/change_icon.sh"
+set change_icon = "${cg_folder}/change_icon.py"
 
 # usage
 if ($# < 1) then

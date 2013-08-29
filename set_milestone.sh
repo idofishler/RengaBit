@@ -5,7 +5,7 @@ set cg_folder = ~/.cg
 
 # icon config
 set icon_png = "${cg_folder}/file-icon.png"
-set change_icon = "${cg_folder}/change_icon.sh"
+set change_icon = "${cg_folder}/change_icon.py"
 
 # usage
 if ($# < 2) then
