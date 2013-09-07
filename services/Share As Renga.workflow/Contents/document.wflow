@@ -18,6 +18,180 @@
 					<key>Container</key>
 					<string>List</string>
 					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.cocoa.string</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>2.0.3</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>COMMAND_STRING</key>
+					<dict/>
+					<key>CheckedForUserDefaultShell</key>
+					<dict/>
+					<key>inputMethod</key>
+					<dict/>
+					<key>shell</key>
+					<dict/>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.cocoa.string</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run Shell Script.action</string>
+				<key>ActionName</key>
+				<string>Run Shell Script</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>COMMAND_STRING</key>
+					<string>cd ~/.cg
+java -jar ./rengashare.jar -f "$1"</string>
+					<key>CheckedForUserDefaultShell</key>
+					<true/>
+					<key>inputMethod</key>
+					<integer>1</integer>
+					<key>shell</key>
+					<string>/bin/tcsh</string>
+					<key>source</key>
+					<string></string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.RunShellScript</string>
+				<key>CFBundleVersion</key>
+				<string>2.0.3</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunShellScriptAction</string>
+				<key>InputUUID</key>
+				<string>8243C621-E404-4820-B25B-B110EB5A1047</string>
+				<key>Keywords</key>
+				<array>
+					<string>Shell</string>
+					<string>Script</string>
+					<string>Command</string>
+					<string>Run</string>
+					<string>Unix</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>9BC1C6B4-EA91-4E92-8CFE-0DA944D98E97</string>
+				<key>ShowWhenRun</key>
+				<true/>
+				<key>StartAction</key>
+				<false/>
+				<key>UUID</key>
+				<string>817BEDC2-8718-4C74-BDA8-F6A8BB888D8A</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<integer>0</integer>
+						<key>name</key>
+						<string>inputMethod</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+					<key>1</key>
+					<dict>
+						<key>default value</key>
+						<string></string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>1</string>
+					</dict>
+					<key>2</key>
+					<dict>
+						<key>default value</key>
+						<false/>
+						<key>name</key>
+						<string>CheckedForUserDefaultShell</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>2</string>
+					</dict>
+					<key>3</key>
+					<dict>
+						<key>default value</key>
+						<string></string>
+						<key>name</key>
+						<string>COMMAND_STRING</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>3</string>
+					</dict>
+					<key>4</key>
+					<dict>
+						<key>default value</key>
+						<string>/bin/sh</string>
+						<key>name</key>
+						<string>shell</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>4</string>
+					</dict>
+				</dict>
+				<key>isViewVisible</key>
+				<true/>
+				<key>location</key>
+				<string>769.500000:730.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/English.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
 					<false/>
 					<key>Types</key>
 					<array>
@@ -74,6 +248,8 @@
 				</array>
 				<key>Class Name</key>
 				<string>Set_Value_of_Variable</string>
+				<key>Disabled</key>
+				<true/>
 				<key>InputUUID</key>
 				<string>57F708BA-D9BA-4F5D-AC54-F1E41C223D07</string>
 				<key>Keywords</key>
@@ -109,14 +285,14 @@
 					</dict>
 				</dict>
 				<key>isViewVisible</key>
-				<true/>
+				<false/>
 				<key>location</key>
-				<string>769.500000:730.000000</string>
+				<string>769.500000:493.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Set Value of Variable.action/Contents/Resources/English.lproj/main.nib</string>
 			</dict>
 			<key>isViewVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>action</key>
@@ -156,7 +332,7 @@
 					<dict>
 						<key>tokenizedValue</key>
 						<array>
-							<string>With who you like to shere this Renga?</string>
+							<string>Who would you like to RengaShare with?</string>
 						</array>
 					</dict>
 					<key>requireInput</key>
@@ -184,7 +360,7 @@
 					<key>defaultAnswer</key>
 					<string>jhon.doe@domain.com</string>
 					<key>defaultMessage</key>
-					<string>With who you like to shere this Renga?</string>
+					<string>Who would you like to RengaShare with?</string>
 					<key>requireInput</key>
 					<true/>
 				</dict>
@@ -202,6 +378,8 @@
 				</array>
 				<key>Class Name</key>
 				<string>AMAskForTextAction</string>
+				<key>Disabled</key>
+				<true/>
 				<key>IgnoresInput</key>
 				<true/>
 				<key>InputUUID</key>
@@ -290,14 +468,14 @@
 					</dict>
 				</dict>
 				<key>isViewVisible</key>
-				<true/>
+				<false/>
 				<key>location</key>
-				<string>769.500000:625.000000</string>
+				<string>769.500000:451.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Ask for Text.action/Contents/Resources/English.lproj/main.nib</string>
 			</dict>
 			<key>isViewVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>action</key>
@@ -363,6 +541,8 @@
 				</array>
 				<key>Class Name</key>
 				<string>Get_Value_of_Variable</string>
+				<key>Disabled</key>
+				<true/>
 				<key>InputUUID</key>
 				<string>A6F9AB2B-40F1-4700-8BA6-3684D8100AC4</string>
 				<key>Keywords</key>
@@ -398,207 +578,38 @@
 					</dict>
 				</dict>
 				<key>isViewVisible</key>
-				<true/>
+				<false/>
 				<key>location</key>
-				<string>769.500000:443.000000</string>
+				<string>769.500000:409.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Get Value of Variable.action/Contents/Resources/English.lproj/main.nib</string>
 			</dict>
 			<key>isViewVisible</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>action</key>
-			<dict>
-				<key>AMAccepts</key>
-				<dict>
-					<key>Container</key>
-					<string>List</string>
-					<key>Optional</key>
-					<true/>
-					<key>Types</key>
-					<array>
-						<string>com.apple.cocoa.string</string>
-					</array>
-				</dict>
-				<key>AMActionVersion</key>
-				<string>2.0.3</string>
-				<key>AMApplication</key>
-				<array>
-					<string>Automator</string>
-				</array>
-				<key>AMParameterProperties</key>
-				<dict>
-					<key>COMMAND_STRING</key>
-					<dict/>
-					<key>CheckedForUserDefaultShell</key>
-					<dict/>
-					<key>inputMethod</key>
-					<dict/>
-					<key>shell</key>
-					<dict/>
-					<key>source</key>
-					<dict/>
-				</dict>
-				<key>AMProvides</key>
-				<dict>
-					<key>Container</key>
-					<string>List</string>
-					<key>Types</key>
-					<array>
-						<string>com.apple.cocoa.string</string>
-					</array>
-				</dict>
-				<key>ActionBundlePath</key>
-				<string>/System/Library/Automator/Run Shell Script.action</string>
-				<key>ActionName</key>
-				<string>Run Shell Script</string>
-				<key>ActionParameters</key>
-				<dict>
-					<key>COMMAND_STRING</key>
-					<string>~/.cg/make_renga.sh "$1" "$2"</string>
-					<key>CheckedForUserDefaultShell</key>
-					<true/>
-					<key>inputMethod</key>
-					<integer>1</integer>
-					<key>shell</key>
-					<string>/bin/tcsh</string>
-					<key>source</key>
-					<string></string>
-				</dict>
-				<key>BundleIdentifier</key>
-				<string>com.apple.RunShellScript</string>
-				<key>CFBundleVersion</key>
-				<string>2.0.3</string>
-				<key>CanShowSelectedItemsWhenRun</key>
-				<false/>
-				<key>CanShowWhenRun</key>
-				<true/>
-				<key>Category</key>
-				<array>
-					<string>AMCategoryUtilities</string>
-				</array>
-				<key>Class Name</key>
-				<string>RunShellScriptAction</string>
-				<key>InputUUID</key>
-				<string>8243C621-E404-4820-B25B-B110EB5A1047</string>
-				<key>Keywords</key>
-				<array>
-					<string>Shell</string>
-					<string>Script</string>
-					<string>Command</string>
-					<string>Run</string>
-					<string>Unix</string>
-				</array>
-				<key>OutputUUID</key>
-				<string>9BC1C6B4-EA91-4E92-8CFE-0DA944D98E97</string>
-				<key>UUID</key>
-				<string>817BEDC2-8718-4C74-BDA8-F6A8BB888D8A</string>
-				<key>UnlocalizedApplications</key>
-				<array>
-					<string>Automator</string>
-				</array>
-				<key>arguments</key>
-				<dict>
-					<key>0</key>
-					<dict>
-						<key>default value</key>
-						<integer>0</integer>
-						<key>name</key>
-						<string>inputMethod</string>
-						<key>required</key>
-						<string>0</string>
-						<key>type</key>
-						<string>0</string>
-						<key>uuid</key>
-						<string>0</string>
-					</dict>
-					<key>1</key>
-					<dict>
-						<key>default value</key>
-						<string></string>
-						<key>name</key>
-						<string>source</string>
-						<key>required</key>
-						<string>0</string>
-						<key>type</key>
-						<string>0</string>
-						<key>uuid</key>
-						<string>1</string>
-					</dict>
-					<key>2</key>
-					<dict>
-						<key>default value</key>
-						<false/>
-						<key>name</key>
-						<string>CheckedForUserDefaultShell</string>
-						<key>required</key>
-						<string>0</string>
-						<key>type</key>
-						<string>0</string>
-						<key>uuid</key>
-						<string>2</string>
-					</dict>
-					<key>3</key>
-					<dict>
-						<key>default value</key>
-						<string></string>
-						<key>name</key>
-						<string>COMMAND_STRING</string>
-						<key>required</key>
-						<string>0</string>
-						<key>type</key>
-						<string>0</string>
-						<key>uuid</key>
-						<string>3</string>
-					</dict>
-					<key>4</key>
-					<dict>
-						<key>default value</key>
-						<string>/bin/sh</string>
-						<key>name</key>
-						<string>shell</string>
-						<key>required</key>
-						<string>0</string>
-						<key>type</key>
-						<string>0</string>
-						<key>uuid</key>
-						<string>4</string>
-					</dict>
-				</dict>
-				<key>isViewVisible</key>
-				<true/>
-				<key>location</key>
-				<string>769.500000:340.000000</string>
-				<key>nibPath</key>
-				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/English.lproj/main.nib</string>
-			</dict>
-			<key>isViewVisible</key>
-			<true/>
+			<false/>
 		</dict>
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>2D06C946-9BBB-4202-8AFB-D850B59DB13F</key>
-		<dict>
-			<key>from</key>
-			<string>31E13FE8-CFCA-4FD2-9146-D6980EA42B13 - 31E13FE8-CFCA-4FD2-9146-D6980EA42B13</string>
-			<key>to</key>
-			<string>817BEDC2-8718-4C74-BDA8-F6A8BB888D8A - 817BEDC2-8718-4C74-BDA8-F6A8BB888D8A</string>
-		</dict>
-		<key>73CFE0F2-B516-4E8F-86DD-24E4235E607B</key>
+		<key>24032CA5-E493-420D-8FA9-C0910D466F2E</key>
 		<dict>
 			<key>from</key>
 			<string>AAE7189B-0F41-45D8-91EF-F24E06B0565D - AAE7189B-0F41-45D8-91EF-F24E06B0565D</string>
 			<key>to</key>
 			<string>81543072-72AA-422B-96E3-A96096FD4AC0 - 81543072-72AA-422B-96E3-A96096FD4AC0</string>
 		</dict>
-		<key>E50B1965-5D75-4FC6-87EF-1D1B1DE38C62</key>
+		<key>5549F339-2BB7-4EBC-952B-1304DF2382C2</key>
 		<dict>
 			<key>from</key>
 			<string>81543072-72AA-422B-96E3-A96096FD4AC0 - 81543072-72AA-422B-96E3-A96096FD4AC0</string>
 			<key>to</key>
 			<string>31E13FE8-CFCA-4FD2-9146-D6980EA42B13 - 31E13FE8-CFCA-4FD2-9146-D6980EA42B13</string>
+		</dict>
+		<key>CFEDD2CB-2D59-4657-8751-A272C4BE3585</key>
+		<dict>
+			<key>from</key>
+			<string>817BEDC2-8718-4C74-BDA8-F6A8BB888D8A - 817BEDC2-8718-4C74-BDA8-F6A8BB888D8A</string>
+			<key>to</key>
+			<string>AAE7189B-0F41-45D8-91EF-F24E06B0565D - AAE7189B-0F41-45D8-91EF-F24E06B0565D</string>
 		</dict>
 	</dict>
 	<key>variables</key>
