@@ -11,12 +11,12 @@
 
 @set PLINK_PROTOCOL=ssh
 @if not defined TERM set TERM=msys
-@cd %1 
-@set command=%3
-@set command=%command:"=%
-@IF "%2" == "nf" (
-   %command%
-  ) ELSE (
-   %command% %2
-  )
-  
+@set dir=%~1
+@set dir=%dir:AAAA= %
+@set dir=%dir:fakeQ="%
+@cd %dir%
+@set command=%~2
+@rem set command=%command:"=%
+@set command=%command:AAAA= %
+@set command=%command:fakeQ="%
+@%command%
