@@ -37,21 +37,21 @@ In this version
 ---------------
 
 Supported:
-    * Mark Milestone - by right click
-    * Show Milestone - by right click, displays in a folder
-    * both files and folders
-    * Icon change
-    * See comments when viewing milestones
-    * See date modified according to the commit time
-    * See the committer name on the comments
-    * Revert to some milestone support (v0.2.0)
-    * Share As Renga (P2P share via webRTC) [sharing only the file] - v0.2.1
+* Mark Milestone - by right click
+* Show Milestone - by right click, displays in a folder
+* both files and folders
+* Icon change
+* See comments when viewing milestones
+* See date modified according to the commit time
+* See the committer name on the comments
+* Revert to some milestone support (v0.2.0)
+* Share As Renga (P2P share via webRTC) [sharing only the file] - v0.2.1
 
 Not supported (future dev):
-    * Share file with milestones (v0.2.2)
-    * View file Milestones (infographic) on site (v0.2.3)
-    * RengaSync (sync git via webRTC) (v0.3.0)
-    * Branches (v0.3.0)
+* Share file with milestones (v0.2.2)
+* View file Milestones (infographic) on site (v0.2.3)
+* RengaSync (sync git via webRTC) (v0.3.0)
+* Branches (v0.3.0)
 
 Prerequisites
 -------------
