@@ -97,7 +97,7 @@ java -jar ./rengashare.jar -f "$1"</string>
 				<key>OutputUUID</key>
 				<string>9BC1C6B4-EA91-4E92-8CFE-0DA944D98E97</string>
 				<key>ShowWhenRun</key>
-				<true/>
+				<false/>
 				<key>StartAction</key>
 				<false/>
 				<key>UUID</key>

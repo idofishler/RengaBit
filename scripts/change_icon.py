@@ -14,16 +14,19 @@ def extract_icon(file_path):
 	file_icon_png.writeToFile_atomically_(file_icon_png_path, None)
 	return file_icon_png_path
 
-def clac_pos(img):
-	x = img.size[0] * 2/3
-	y = img.size[1] * 2/3 
-	return x, y
+def match_images(background, foreground):
+	width = background.size[0]
+	hight = background.size[1]
+	img = foreground.resize((width, hight))
+	x = 0
+	y = 0
+	return img, x, y
 
 def add_rengabit_icon(fileimage):
 	background = Image.open(fileimage)
 	foreground = Image.open(renga_icon_path)
-	x, y = clac_pos(background)
-	background.paste(foreground, (x, y), foreground)
+	img, x, y = match_images(background, foreground)
+	background.paste(img, (x, y), img)
 	new_icon_path = fileimage+"_new.png"
 	background.save(new_icon_path)
 	return new_icon_path
