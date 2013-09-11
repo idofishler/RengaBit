@@ -6,7 +6,7 @@ set meta_file_name = ".cg"
 
 # icon config
 set icon_png = "${cg_folder}/file-icon.png"
-set change_icon = "${cg_folder}/change_icon.py"
+set change_icon = "${cg_folder}/dist/change_icon.app/Contents/MacOS/change_icon"
 
 # usage
 if ($# < 1) then

@@ -15,11 +15,11 @@ def extract_icon(file_path):
 	return file_icon_png_path
 
 def match_images(background, foreground):
-	width = background.size[0] * 1/3
-	hight = background.size[1] * 1/3
+	width = background.size[0]
+	hight = background.size[1]
 	img = foreground.resize((width, hight))
-	x = background.size[0] * 2/3
-	y = background.size[1] * 2/3 
+	x = 0
+	y = 0
 	return img, x, y
 
 def add_rengabit_icon(fileimage):
