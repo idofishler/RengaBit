@@ -1,26 +1,40 @@
-renga_client
-============
+RengaBit - client
+=================
 
 RengaBit - Creative collaboration - just a right click away.
 
 RengaBit allows you to simply work, we keep track of the precess for you. It’s a sub-version management system, your work process doesn’t change.
 
 RengaBit is...
+--------------
 
-Version control
-  Save Milestones (versions) of your files and folders as they develop. View these Milestones and return to a Milestone  easily. In order to reduce required disk space (Up to 90%) RengaBit saves only the differences between the versions. 
+* Version control
+Save Milestones (versions) of your files and folders as they develop.
+View these Milestones and return to a Milestone  easily. In order to 
+reduce required disk space (Up to 90%) RengaBit saves only the 
+differences between the versions. 
 
-Sharing tool
-  Share your work directly with colleagues or friend with “RengaShare”; Peer to Peer file sharing. You can share any file, regardless of its size, with anyone, any time. We do not keep your files, we don’t have a “cloud”. Your files are private and protected.
+* Sharing tool
+Share your work directly with colleagues or friend with “RengaShare”; 
+Peer to Peer file sharing. You can share any file, regardless of its 
+size, with anyone, any time. We do not keep your files, we don’t have 
+a “cloud”. Your files are private and protected.
 
-Comments & Suggestion tool
-  Write a comment or add a suggestion to projects that people share with you.
+* Comments & Suggestion tool
+Write a comment or add a suggestion to projects that people share 
+with you.
 
-Desktop Syncing & Managing App
-  You can manage the different versions and “paths” that your project took inside your file system. It’s “just a right-click away”.
+* Desktop Syncing & Managing App
+You can manage the different versions and “paths” that your project 
+took inside your file system. It’s “just a right-click away”.
 
-Project Collaboration & Management Platform
-  To access your files from your tablet, mobile or any other device, all you need is a browser. The RengaBit website allows you to get an infographic view of your project’s progress.
+* Project Collaboration & Management Platform
+To access your files from your tablet, mobile or any other device, 
+all you need is a browser. The RengaBit website allows you to get an 
+infographic view of your project’s progress.
+
+In this version
+---------------
 
 Supported:
     * Mark Milestone - by right click
@@ -39,8 +53,10 @@ Not supported (future dev):
     * RengaSync (sync git via webRTC) (v0.3.0)
     * Branches (v0.3.0)
 
-**Note: requires git to be installed as a prerequisite - http://git-scm.com/download/mac.
+Prerequisites
+-------------
+requires [git] [1] to be installed including non-command line tools enablement.
 
-You can download the installer here: http://share.rengabit.com/f69fe17f
+  [1]: http://git-scm.com/        "Git"
 
 :)
