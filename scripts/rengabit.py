@@ -7,6 +7,7 @@ Usage:
     rengabit.py [(-d | --debug)] mark <filepath> [<commit_msg>]
     rengabit.py [(-d | --debug)] show <filepath>
     rengabit.py [(-d | --debug)] return <filepath> [--rev=<revision>]
+    rengabit.py [(-d | --debug)] report
     rengabit.py (-h | --help)
     rengabit.py --version
 
@@ -21,7 +22,7 @@ Options:
 import logging
 import os
 from subprocess import check_output, CalledProcessError
-from rengautils import gui, macbrg
+from rengautils import gui, macbrg, mail
 import sys
 import shutil
 import json
@@ -45,6 +46,20 @@ def osx():
 
 if osx():
     from docopt import docopt
+
+
+def config_logger(args):
+    debug = args['--debug']
+    logger.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s:\n%(message)s')
+    if debug:
+        handler = logging.StreamHandler()
+    else:
+        handler = logging.FileHandler(renga_log_file)
+    handler.setLevel(logging.DEBUG)
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
 
 def check_reop():
@@ -76,7 +91,20 @@ def ask_for_comment():
     app = gui.RengaGui(None)
     app.ask_for_comment()
     app.mainloop()
-    return app.result
+    try:
+        return app.result
+    except AttributeError:
+        return None
+
+
+def ask_for_issue_cmt():
+    app = gui.RengaGui(None)
+    app.issue_report()
+    app.mainloop()
+    try:
+        return app.result
+    except AttributeError:
+        return None
 
 
 def alert(msg):
@@ -207,6 +235,18 @@ def run_command(cmd):
         return False
 
 
+def change_dir(f_path):
+    """change directory to file's or folder's directory"""
+    if os.path.isdir(f_path):
+        os.chdir(f_path)
+        logger.debug("filepath is a directory")
+        logger.debug("Changed directory to: %s", f_path)
+    else:
+        os.chdir(os.path.dirname(f_path))
+        logger.debug("filepath is a file")
+        logger.debug("Changed directory to: %s", os.path.dirname(f_path))
+
+
 def mark_milestone(file_path, commit_msg=None):
     """
     Will create git repository (if nedded), add the relevant
@@ -214,6 +254,9 @@ def mark_milestone(file_path, commit_msg=None):
     """
     if not commit_msg:
         commit_msg = ask_for_comment()
+        if not commit_msg:
+            alert("You must write some comment.\nNo changes were made.")
+            return
     logger.debug("Mark milestone for %s: %s", *(file_path, commit_msg))
     check_and_create_repo()
     # git add
@@ -317,18 +360,16 @@ def return_to_milestone(file_path, revision=None):
     shutil.rmtree(mls_folder)
 
 
-def config_logger(args):
-    debug = args['--debug']
-    logger.setLevel(logging.DEBUG)
-    formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s:\n%(message)s')
-    if debug:
-        handler = logging.StreamHandler()
-    else:
-        handler = logging.FileHandler(renga_log_file)
-    handler.setLevel(logging.DEBUG)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+def report_issue():
+    sub = "RengaBit client: Issue report"
+    sender = "pilot@rengabit.com"  # TODO get the user's email
+    msg = ask_for_issue_cmt()
+    if not msg:
+        return
+    to = ['info@rengabit.com']
+    logger.debug("sending issue report with massage:\n%s", msg)
+    mail.send_mail(sender, to, sub, msg, renga_log_file)
+    alert("Thanks. The issue report has been sent.\nWe'll fix it ASAP!")
 
 
 def main():
@@ -336,17 +377,10 @@ def main():
     config_logger(args)
     logger.debug(args)
     # Run a command according to the given arguments
-    f = os.path.realpath(os.path.expanduser(args['<filepath>']))
-
-    # change directory to file's directort
-    if os.path.isdir(f):
-        os.chdir(f)
-        logger.debug("filepath is a directory")
-        logger.debug("Changed directory to: %s", f)
-    else:
-        os.chdir(os.path.dirname(f))
-        logger.debug("filepath is a file")
-        logger.debug("Changed directory to: %s", os.path.dirname(f))
+    f = None
+    if args['<filepath>']:
+        f = os.path.realpath(os.path.expanduser(args['<filepath>']))
+        change_dir(f)
 
     # Rund the command
     if args['mark']:
@@ -355,6 +389,8 @@ def main():
         show_milestones(f)
     elif args['return']:
         return_to_milestone(f, args["--rev"])
+    elif args['report']:
+        report_issue()
 
 if __name__ == '__main__':
     main()
