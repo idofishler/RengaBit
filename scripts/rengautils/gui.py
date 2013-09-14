@@ -27,6 +27,11 @@ class RengaGui(Tkinter.Tk):
         self.entry = ttk.Entry(self.mainframe, textvariable=self.cmt).grid(column=0, row=1, columnspan=4, sticky="EW")
         self.bind("<Return>", self.done())
 
+    def alert(self, msg):
+        ttk.Label(self.mainframe, text=msg).grid(column=1, row=0, sticky="W")
+        ttk.Button(self.mainframe, text="OK", command=self.quit).grid(column=3, row=1, sticky="W")
+        self.bind("<Return>", self.quit())
+
 if __name__ == "__main__":
     app = RengaGui(None)
     app.mainloop()
