@@ -34,8 +34,12 @@ def osx():
 
 
 debug = False
-renga_path="C:\\Users\\AlmondNET\\Documents\\GitHub\\renga_osx_client\\scripts"
-#renga_path = os.path.join(os.environ['HOME'], ".cg")
+
+if osx():
+    renga_path = os.path.join(os.environ['HOME'], ".cg")
+else:
+    renga_path="C:\\Users\\AlmondNET\\Documents\\GitHub\\renga_osx_client\\scripts"
+
 renga_icon_path = os.path.join(renga_path, "RengaBitIcon.png")
 renga_log_file = os.path.join(renga_path, "rengabit.log")
 if(osx()):
