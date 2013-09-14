@@ -6,7 +6,7 @@ RengaBit - collaborative creation, just a right click away
 Usage:
     rengabit.py [(-d | --debug)] mark <filepath> [<commit_msg>]
     rengabit.py [(-d | --debug)] show <filepath>
-    rengabit.py [(-d | --debug)] return <filepath> --rev=<revision>
+    rengabit.py [(-d | --debug)] return <filepath> [--rev=<revision>]
     rengabit.py (-h | --help)
     rengabit.py --version
 
@@ -36,6 +36,7 @@ renga_log_file = os.path.join(renga_path, "rengabit.log")
 baseScript = os.path.join(renga_path, "rengabit.sh")
 change_file_comment_script = os.path.join(renga_path, "change_file_comment")
 alert_script = os.path.join(renga_path, "alert")
+meta_file_name = ".cg"
 logger = logging.getLogger(__name__)
 
 
@@ -132,13 +133,15 @@ def get_revs(file_path):
     }
 
     """
-    cmd = ["git", "log", "--reverse", "--format=%H|%cn|%ci|%s", "--", file_path]
+    cmd = ["git", "log", "--reverse",
+           "--format=%H|%cn|%ct|%s", "--", file_path]
     logger.debug(' '.join(cmd))
     res = check_output(cmd)
     revs_list = str(res.decode("utf-8").rstrip()).split("\n")
     result = []
     for rev_str in revs_list:
-        rev_dict = dict(zip(["sha1", "commiter", "date", "commit_msg"], rev_str.split("|")))
+        rev_dict = dict(
+            zip(["sha1", "commiter", "date", "commit_msg"], rev_str.split("|")))
         result.append(rev_dict)
     return result
 
@@ -151,11 +154,45 @@ def write_meta_file(dst_dir, obj):
     if not os.path.isdir(dst_dir):
         logger.error("%s is not a directory", dst_dir)
         return None
-    dst = os.path.join(dst_dir, ".cg")
+    dst = os.path.join(dst_dir, meta_file_name)
     f = open(dst, "w")
     logger.debug("writing meta file to: %s", dst)
     json.dump(obj, f)
     return dst
+
+
+def _decode_list(data):
+    rv = []
+    for item in data:
+        if isinstance(item, unicode):
+            item = item.encode('utf-8')
+        elif isinstance(item, list):
+            item = _decode_list(item)
+        elif isinstance(item, dict):
+            item = _decode_dict(item)
+        rv.append(item)
+    return rv
+
+
+def _decode_dict(data):
+    rv = {}
+    for key, value in data.iteritems():
+        if isinstance(key, unicode):
+            key = key.encode('utf-8')
+        if isinstance(value, unicode):
+            value = value.encode('utf-8')
+        elif isinstance(value, list):
+            value = _decode_list(value)
+        elif isinstance(value, dict):
+            value = _decode_dict(value)
+        rv[key] = value
+    return rv
+
+
+def get_revs_form_meta_file(meta_file):
+    f = open(meta_file, "r")
+    revs = json.load(f, object_hook=_decode_dict)
+    return revs
 
 
 def run_command(cmd):
@@ -179,11 +216,15 @@ def mark_milestone(file_path, commit_msg=None):
         commit_msg = ask_for_comment()
     logger.debug("Mark milestone for %s: %s", *(file_path, commit_msg))
     check_and_create_repo()
+    # git add
     add_file_or_folder(file_path)
+    # git commit
     ok = run_command('git commit -m "' + commit_msg + '"')
     if ok and osx():
+        # change the file/folder's icon
         logger.debug("changing icon")
         macbrg.change_icon(file_path)
+        # modify the file comments
         change_file_comment(file_path, commit_msg)
     else:
         alert("There were no changes since last milestone.")
@@ -194,35 +235,86 @@ def show_milestones(file_path):
     Creates a folder named: <file_path>_milestones
     and put all revision of the given file in it
     """
+    logger.debug("Show milestones for file: %s", file_path)
     try:
         got_repo = check_reop()
         if not got_repo:
             logger.debug("No git repo here!")
             alert("There are no milestones for this file")
             return
-        monitored = run_command('git ls-files "' + file_path + '" --error-unmatch')
+        monitored = run_command(
+            'git ls-files "' + file_path + '" --error-unmatch')
         if not monitored:
             logger.debug("This file(s) is(are) not being monitored!")
             alert("There are no milestones for this file")
             return
+        # prepare a dir to put all milestones
         mls_dir = prepare_mile_stone_dir(file_path)
+        # copy current file or folder to milestones folder
         copy_to_dir(file_path, mls_dir, "current")
+        # save file's uncommitted changes
         run_command("git stash")
+        # find revision for this file where the file has been touched
         revs = get_revs(file_path)
+        # write to file - for later use (return to milestone)
         write_meta_file(mls_dir, revs)
         for i, rev in enumerate(revs):
-            run_command('git checkout ' + rev['sha1'] + ' -- "' + file_path + '"')
+            # get this file revision
+            run_command('git checkout ' + rev[
+                        'sha1'] + ' -- "' + file_path + '"')
+            # copy revision to the milestones folder
             new_file = copy_to_dir(file_path, mls_dir, i + 1)
+            comment = rev["commiter"] + ": " + rev["commit_msg"]
             if osx():
-                comment = rev["commiter"] + ": " + rev["commit_msg"]
+                # modifiy the file comment acorrding to it's commit message
                 change_file_comment(new_file, comment)
+            # modifiy the file "last modified" according to commit time
+            os.utime(new_file, (int(rev["date"]), int(rev["date"])))
     finally:
-        run_command("git reset --hard HEAD")
+        # clean up...
+        # get orignal file to the last revision
+        run_command('git checkout HEAD -- "' + file_path + '"')
+        # restore uncommited changes
         run_command("git stash pop")
+        if osx():
+            # restore icon
+            macbrg.change_icon(file_path)
 
 
-def return_to_milestone(filepath, revision=None):
-    pass
+def return_to_milestone(file_path, revision=None):
+    """
+    Return to milestome with revision number. if revison is not provided,
+    the revision number will be extracted from the file name.
+    """
+    logger.debug("return to milestone of: %s", file_path)
+    mls_folder = os.path.dirname(file_path)
+    meta_file = os.path.join(mls_folder, meta_file_name)
+    if not os.path.exists(meta_file):
+        logger.warning("no %s meta file here", meta_file_name)
+        alert("This is not a milestome of any file or folder")
+        return
+    file_name, ext = os.path.splitext(os.path.basename(file_path))
+    if not revision:
+        # get the revision number from the file name
+        revision = file_name.rsplit("_", 1)[1]
+    rev = get_revs_form_meta_file(meta_file)[int(revision) - 1]
+    logger.debug("return to rev:\n%s", rev)
+    # get the original file name ()
+    org_file_name = file_name.rsplit("_", 1)[0] + ext
+    org_file = os.path.join(os.path.dirname(mls_folder), org_file_name)
+    sha1 = rev["sha1"]
+    # put the file in it's place
+    run_command('git checkout ' + sha1 + ' -- "' + org_file + '"')
+    # commit the return to milestone
+    cmt_msg = "Return to: " + rev["commit_msg"]
+    run_command('git commit -m "' + cmt_msg + '" -- "' + org_file + '"')
+    if osx():
+        # change commnet
+        change_file_comment(org_file, rev["commit_msg"])
+        # restore icon
+        macbrg.change_icon(org_file)
+    # clean milestone folder
+    shutil.rmtree(mls_folder)
 
 
 def config_logger(args):
