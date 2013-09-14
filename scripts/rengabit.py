@@ -29,24 +29,31 @@ import json
 import shlex
 
 
-debug = False
+def osx():
+    return sys.platform == 'darwin'
 
-renga_path = os.path.join(os.environ['HOME'], ".cg")
+
+debug = False
+renga_path="C:\\Users\\AlmondNET\\Documents\\GitHub\\renga_osx_client\\scripts"
+#renga_path = os.path.join(os.environ['HOME'], ".cg")
 renga_icon_path = os.path.join(renga_path, "RengaBitIcon.png")
 renga_log_file = os.path.join(renga_path, "rengabit.log")
-baseScript = os.path.join(renga_path, "rengabit.sh")
+if(osx()):
+    baseScript = os.path.join(renga_path, "rengabit.sh")
+else:
+    baseScript = os.path.join("C:\\Rengabit\\pgit\\renga.bat")
+
 change_file_comment_script = os.path.join(renga_path, "change_file_comment")
 alert_script = os.path.join(renga_path, "alert")
 meta_file_name = ".cg"
 logger = logging.getLogger(__name__)
 
 
-def osx():
-    return sys.platform == 'darwin'
 
 if osx():
     from docopt import docopt
-
+else:
+    from docopt import docopt
 
 def config_logger(args):
     debug = args['--debug']
@@ -79,7 +86,11 @@ def add_file_or_folder(file_path):
     if os.path.isdir(file_path):
         run_command('git add .')
     else:
-        run_command('git add "' + file_path + '"')
+        if(osx()):
+            run_command('git add "' + file_path + '"')
+        else:
+            run_command("git add "+escapeStringForBatch(file_path))
+
 
 
 def ask_for_comment():
@@ -141,6 +152,14 @@ def copy_to_dir(file_path, mls_dir, ver):
     logger.debug("copyied %s to %s", *(file_path, dst))
     return dst
 
+def add_comment_for_windows(file_path,comment):
+    """Copy file or folder to mls_dir with the name <file>_<ver>.<ext>"""
+    file_name, ext = os.path.splitext(file_path)
+    new_path = file_name + "_" + comment + ext
+    new_name = os.path.basename(new_path)
+    os.rename(file_path,new_path)
+    logger.debug("changes name of %s to %s", *(file_path, new_path))
+    return new_path
 
 def change_file_comment(file_path, comment):
     cmd = [change_file_comment_script, file_path, comment]
@@ -161,15 +180,26 @@ def get_revs(file_path):
     }
 
     """
-    cmd = ["git", "log", "--reverse",
-           "--format=%H|%cn|%ct|%s", "--", file_path]
+    if(osx()):
+        cmd = ["git", "log", "--reverse","--format=%H|%cn|%ct|%s", "--", file_path]
+    else:
+        cmd = "git log --reverse --format=%H,%cn,%ct,%s "+escapeStringForBatch(file_path)
+
     logger.debug(' '.join(cmd))
-    res = check_output(cmd)
+
+    if(osx()):
+        res = check_output(cmd)
+    else:
+        res = check_output([baseScript,cmd])
     revs_list = str(res.decode("utf-8").rstrip()).split("\n")
     result = []
+    if osx():
+        deli="|"
+    else:
+        deli=","
     for rev_str in revs_list:
         rev_dict = dict(
-            zip(["sha1", "commiter", "date", "commit_msg"], rev_str.split("|")))
+            zip(["sha1", "commiter", "date", "commit_msg"], rev_str.split(deli)))
         result.append(rev_dict)
     return result
 
@@ -226,8 +256,12 @@ def get_revs_form_meta_file(meta_file):
 def run_command(cmd):
     try:
         logger.debug(cmd)
-        cmd_list = shlex.split(cmd)
-        res = check_output(cmd_list)
+        if(osx()):
+            cmd_list = shlex.split(cmd)
+            res = check_output(cmd_list)
+        else:
+            print(cmd)
+            res=check_output([baseScript,cmd])
         logger.debug(res)
         return True
     except CalledProcessError as e:
@@ -262,15 +296,22 @@ def mark_milestone(file_path, commit_msg=None):
     # git add
     add_file_or_folder(file_path)
     # git commit
-    ok = run_command('git commit -m "' + commit_msg + '"')
-    if ok and osx():
-        # change the file/folder's icon
-        logger.debug("changing icon")
-        macbrg.change_icon(file_path)
-        # modify the file comments
-        change_file_comment(file_path, commit_msg)
+    if osx():
+        ok = run_command('git commit -m "' + commit_msg + '"')
+        if ok:
+            # change the file/folder's icon
+            logger.debug("changing icon")
+            macbrg.change_icon(file_path)
+            # modify the file comments
+            change_file_comment(file_path, commit_msg)
+        else:
+            alert("There were no changes since last milestone.")
     else:
-        alert("There were no changes since last milestone.")
+        ok = run_command("git commit -m " + escapeStringForBatch(commit_msg))
+        if not ok:
+            alert("There were no changes since last milestone.")
+
+
 
 
 def show_milestones(file_path):
@@ -285,8 +326,13 @@ def show_milestones(file_path):
             logger.debug("No git repo here!")
             alert("There are no milestones for this file")
             return
-        monitored = run_command(
-            'git ls-files "' + file_path + '" --error-unmatch')
+        if(osx()):
+            monitored = run_command(
+                'git ls-files "' + file_path + '" --error-unmatch')
+        else:
+            monitored = run_command(
+                "git ls-files " + escapeStringForBatch(file_path) +" --error-unmatch")
+
         if not monitored:
             logger.debug("This file(s) is(are) not being monitored!")
             alert("There are no milestones for this file")
@@ -303,20 +349,29 @@ def show_milestones(file_path):
         write_meta_file(mls_dir, revs)
         for i, rev in enumerate(revs):
             # get this file revision
-            run_command('git checkout ' + rev[
-                        'sha1'] + ' -- "' + file_path + '"')
+            if osx():
+                run_command('git checkout ' + rev['sha1'] + ' -- "' + file_path + '"')
+            else:
+                run_command("git checkout " + rev['sha1'] +" -- "+escapeStringForBatch(file_path))
+
             # copy revision to the milestones folder
             new_file = copy_to_dir(file_path, mls_dir, i + 1)
-            comment = rev["commiter"] + ": " + rev["commit_msg"]
             if osx():
+                comment = rev["commiter"] + ": " + rev["commit_msg"]
                 # modifiy the file comment acorrding to it's commit message
                 change_file_comment(new_file, comment)
+            else:
+                comment = " "+rev["commiter"] + "- " + rev["commit_msg"]
+                new_file=add_comment_for_windows(new_file,comment)
             # modifiy the file "last modified" according to commit time
             os.utime(new_file, (int(rev["date"]), int(rev["date"])))
     finally:
         # clean up...
         # get orignal file to the last revision
-        run_command('git checkout HEAD -- "' + file_path + '"')
+        if osx():
+            run_command('git checkout HEAD -- "' + file_path + '"')
+        else:
+            run_command("git checkout HEAD -- " +escapeStringForBatch(file_path))
         # restore uncommited changes
         run_command("git stash pop")
         if osx():
@@ -339,18 +394,33 @@ def return_to_milestone(file_path, revision=None):
     file_name, ext = os.path.splitext(os.path.basename(file_path))
     if not revision:
         # get the revision number from the file name
-        revision = file_name.rsplit("_", 1)[1]
+        if(osx()):
+            revision = file_name.rsplit("_", 1)[1]
+        else:
+            revision = file_name.split("_")[1]
+
     rev = get_revs_form_meta_file(meta_file)[int(revision) - 1]
     logger.debug("return to rev:\n%s", rev)
     # get the original file name ()
-    org_file_name = file_name.rsplit("_", 1)[0] + ext
+    if osx():
+        org_file_name = file_name.rsplit("_", 1)[0] + ext
+    else:
+        org_file_name = file_name.split("_")[0] + ext
     org_file = os.path.join(os.path.dirname(mls_folder), org_file_name)
     sha1 = rev["sha1"]
     # put the file in it's place
-    run_command('git checkout ' + sha1 + ' -- "' + org_file + '"')
+    if(osx()):
+        run_command('git checkout ' + sha1 + ' -- "' + org_file + '"')
+    else:
+        run_command("git checkout " + sha1 + " -- " + escapeStringForBatch(org_file))
     # commit the return to milestone
-    cmt_msg = "Return to: " + rev["commit_msg"]
-    run_command('git commit -m "' + cmt_msg + '" -- "' + org_file + '"')
+    if osx():
+        cmt_msg = "Return to: " + rev["commit_msg"]
+        run_command('git commit -m "' + cmt_msg + '" -- "' + org_file + '"')
+    else:
+        cmt_msg = "Return to- " + rev["commit_msg"]
+        run_command("git commit -m " +escapeStringForBatch( cmt_msg) + " -- " + escapeStringForBatch(org_file))
+
     if osx():
         # change commnet
         change_file_comment(org_file, rev["commit_msg"])
@@ -371,6 +441,10 @@ def report_issue():
     mail.send_mail(sender, to, sub, msg, renga_log_file)
     alert("Thanks. The issue report has been sent.\nWe'll fix it ASAP!")
 
+def escapeStringForBatch(string):
+    string="fakeQ"+string+"fakeQ"
+    string=string.replace(" ","AAAA")
+    return string
 
 def main():
     args = docopt(__doc__, version='RengaBit-ALPHA-0.2.1')
