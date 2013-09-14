@@ -7,7 +7,7 @@ Usage:
 
 from setuptools import setup
 
-APP = ['change_icon.py']
+APP = ['rengabit.py']
 DATA_FILES = []
 OPTIONS = {'argv_emulation': True}
 

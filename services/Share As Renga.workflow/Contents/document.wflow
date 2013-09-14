@@ -98,8 +98,6 @@ java -jar ./rengashare.jar -f "$1"</string>
 				<string>9BC1C6B4-EA91-4E92-8CFE-0DA944D98E97</string>
 				<key>ShowWhenRun</key>
 				<false/>
-				<key>StartAction</key>
-				<false/>
 				<key>UUID</key>
 				<string>817BEDC2-8718-4C74-BDA8-F6A8BB888D8A</string>
 				<key>UnlocalizedApplications</key>
@@ -287,7 +285,7 @@ java -jar ./rengashare.jar -f "$1"</string>
 				<key>isViewVisible</key>
 				<false/>
 				<key>location</key>
-				<string>769.500000:493.000000</string>
+				<string>769.500000:547.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Set Value of Variable.action/Contents/Resources/English.lproj/main.nib</string>
 			</dict>
@@ -470,7 +468,7 @@ java -jar ./rengashare.jar -f "$1"</string>
 				<key>isViewVisible</key>
 				<false/>
 				<key>location</key>
-				<string>769.500000:451.000000</string>
+				<string>769.500000:505.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Ask for Text.action/Contents/Resources/English.lproj/main.nib</string>
 			</dict>
@@ -580,7 +578,7 @@ java -jar ./rengashare.jar -f "$1"</string>
 				<key>isViewVisible</key>
 				<false/>
 				<key>location</key>
-				<string>769.500000:409.000000</string>
+				<string>769.500000:463.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Get Value of Variable.action/Contents/Resources/English.lproj/main.nib</string>
 			</dict>
@@ -590,26 +588,26 @@ java -jar ./rengashare.jar -f "$1"</string>
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>24032CA5-E493-420D-8FA9-C0910D466F2E</key>
-		<dict>
-			<key>from</key>
-			<string>AAE7189B-0F41-45D8-91EF-F24E06B0565D - AAE7189B-0F41-45D8-91EF-F24E06B0565D</string>
-			<key>to</key>
-			<string>81543072-72AA-422B-96E3-A96096FD4AC0 - 81543072-72AA-422B-96E3-A96096FD4AC0</string>
-		</dict>
-		<key>5549F339-2BB7-4EBC-952B-1304DF2382C2</key>
-		<dict>
-			<key>from</key>
-			<string>81543072-72AA-422B-96E3-A96096FD4AC0 - 81543072-72AA-422B-96E3-A96096FD4AC0</string>
-			<key>to</key>
-			<string>31E13FE8-CFCA-4FD2-9146-D6980EA42B13 - 31E13FE8-CFCA-4FD2-9146-D6980EA42B13</string>
-		</dict>
-		<key>CFEDD2CB-2D59-4657-8751-A272C4BE3585</key>
+		<key>682D011E-AA82-4604-A5A4-54A7F2686B3E</key>
 		<dict>
 			<key>from</key>
 			<string>817BEDC2-8718-4C74-BDA8-F6A8BB888D8A - 817BEDC2-8718-4C74-BDA8-F6A8BB888D8A</string>
 			<key>to</key>
 			<string>AAE7189B-0F41-45D8-91EF-F24E06B0565D - AAE7189B-0F41-45D8-91EF-F24E06B0565D</string>
+		</dict>
+		<key>C6DECB85-00C9-4CCB-A25C-FA5FE35342F3</key>
+		<dict>
+			<key>from</key>
+			<string>AAE7189B-0F41-45D8-91EF-F24E06B0565D - AAE7189B-0F41-45D8-91EF-F24E06B0565D</string>
+			<key>to</key>
+			<string>81543072-72AA-422B-96E3-A96096FD4AC0 - 81543072-72AA-422B-96E3-A96096FD4AC0</string>
+		</dict>
+		<key>E78C2E3A-1B5A-461A-8EFA-CFB309555791</key>
+		<dict>
+			<key>from</key>
+			<string>81543072-72AA-422B-96E3-A96096FD4AC0 - 81543072-72AA-422B-96E3-A96096FD4AC0</string>
+			<key>to</key>
+			<string>31E13FE8-CFCA-4FD2-9146-D6980EA42B13 - 31E13FE8-CFCA-4FD2-9146-D6980EA42B13</string>
 		</dict>
 	</dict>
 	<key>variables</key>
