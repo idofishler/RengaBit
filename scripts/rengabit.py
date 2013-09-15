@@ -19,31 +19,35 @@ Options:
 
 """
 
+
 import logging
 import os
 from subprocess import check_output, CalledProcessError
-from rengautils import gui, macbrg, mail
+from rengautils import gui, mail
 from docopt import docopt
 import sys
 import shutil
 import json
 import shlex
 
-
 def osx():
     return sys.platform == 'darwin'
 
 if osx():
-    renga_path = os.path.join(os.environ['HOME'], ".cg")
-else:
-    renga_path = "C:\\Users\\AlmondNET\\Documents\\GitHub\\renga_osx_client\\scripts"
+    from rengautils import macbrg
 
-renga_icon_path = os.path.join(renga_path, "RengaBitIcon.png")
-renga_log_file = os.path.join(renga_path, "rengabit.log")
-if(osx()):
+
+if osx():
+    renga_path = os.path.join(os.environ['HOME'], ".cg")
+    renga_icon_path = os.path.join(renga_path, "RengaBitIcon.png")
+    renga_log_file = os.path.join(renga_path, "rengabit.log")
     baseScript = os.path.join(renga_path, "rengabit.sh")
+
 else:
+    renga_path = "C:\\Rengabit\\"
     baseScript = os.path.join("C:\\Rengabit\\pgit\\renga.bat")
+    renga_log_file = os.path.join(renga_path, "rengabit.log")
+
 change_file_comment_script = os.path.join(renga_path, "change_file_comment")
 alert_script = os.path.join(renga_path, "alert")
 meta_file_name = ".cg"
