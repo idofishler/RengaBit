@@ -8,6 +8,7 @@ Usage:
     rengabit.py [(-d | --debug)] show <filepath>
     rengabit.py [(-d | --debug)] return <filepath> [--rev=<revision>]
     rengabit.py [(-d | --debug)] report
+    rengabit.py [(-d | --debug)] share <filepath>
     rengabit.py (-h | --help)
     rengabit.py --version
 
@@ -19,16 +20,16 @@ Options:
 
 """
 
-
 import logging
 import os
 from subprocess import check_output, CalledProcessError
-from rengautils import gui, mail
+from rengautils import gui, mail, browser
 from docopt import docopt
 import sys
 import shutil
 import json
 import shlex
+
 
 def osx():
     return sys.platform == 'darwin'
@@ -423,6 +424,14 @@ def return_to_milestone(file_path, revision=None):
     delete(mls_folder)
 
 
+def share(file_path, debug=False):
+    if debug:
+        b = browser.Browser()
+    else:
+        b = browser.Browser(renga_log_file)
+    b.share_file_via_webRTC(file_path)
+
+
 def report_issue():
     sub = "RengaBit client: Issue report"
     sender = "pilot@rengabit.com"  # TODO get the user's email
@@ -460,6 +469,8 @@ def main():
         show_milestones(f)
     elif args['return']:
         return_to_milestone(f, args["--rev"])
+    elif args['share']:
+        share(f, args['--debug'])
     elif args['report']:
         report_issue()
 
