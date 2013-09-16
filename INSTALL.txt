@@ -1,0 +1,19 @@
+RengaBit - Creative collaboration - just a right click away.
+===========================================================
+RengaBit allows you to simply work, we keep track of the process for you.
+It’s a sub-version management system, your work process doesn't change.
+
+VERSION: RengaBit-ALPHA-0.2.1
+
+How to install RengaBit client on windows:
+------------------------------------------
+1.  Download and install git from: http://git-scm.com/download/win
+	a.  In git setup choose:
+		Adjusting your PATH environment: Run Git From The Windows Command Prompt
+	b.  After installation you should be able to open cmd prompt (WIN+R -> type: cmd, hit: ENTER)
+		and run the command 'git' to see the usage massage. If you see an error something is wrong.
+
+2.  Extract RengaBit.zip into C:\RengaBit
+3.  Run C:\RengaBit\install.bat
+	a.  Don't worry about the registry alerts. (They simply add the the right-click option menu)
+	b.  We ask for you name and email. We really don't keep them. (They will be shown on milestones that you create)

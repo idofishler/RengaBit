@@ -34,7 +34,7 @@ class Browser():
         if self.osx():
             chromedriver = os.path.expanduser("~/.cg/lib/chromedriver")
         else:
-            chromedriver = os.path.realpath("C:C:\\Rengabit\\lib\\chromedriver.exe")
+            chromedriver = os.path.realpath("C:\\Rengabit\\lib\\chromedriver.exe")
         os.environ["webdriver.chrome.driver"] = chromedriver
         share_site = "http://share.rengabit.com"
         self._logger.debug("opening page: %s", share_site)

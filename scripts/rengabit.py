@@ -42,11 +42,8 @@ if osx():
     renga_path = os.path.join(os.environ['HOME'], ".cg")
     renga_icon_path = os.path.join(renga_path, "RengaBitIcon.png")
     renga_log_file = os.path.join(renga_path, "rengabit.log")
-    baseScript = os.path.join(renga_path, "rengabit.sh")
-
 else:
     renga_path = "C:\\Rengabit\\"
-    baseScript = os.path.join("C:\\Rengabit\\pgit\\renga.bat")
     renga_log_file = os.path.join(renga_path, "rengabit.log")
 
 change_file_comment_script = os.path.join(renga_path, "change_file_comment")
@@ -269,11 +266,8 @@ def run_command(cmd):
     """
     try:
         logger.debug(cmd)
-        if(osx()):
-            cmd_list = shlex.split(cmd)
-            res = check_output(cmd_list)
-        else:
-            res = check_output([baseScript, cmd])
+        cmd_list = shlex.split(cmd)
+        res = check_output(cmd_list)
         logger.debug(res)
         return res
     except CalledProcessError as e:
@@ -445,11 +439,7 @@ def report_issue():
 
 
 def deal_with_spaces(string):
-    if osx():
-        return '"' + string + '"'
-    else:
-        string = "fakeQ" + string + "fakeQ"
-        return string.replace(" ", "AAAA")
+    return '"' + string + '"'
 
 
 def main():
