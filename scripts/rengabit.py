@@ -452,7 +452,7 @@ def main():
         f = os.path.realpath(os.path.expanduser(args['<filepath>']))
         change_dir(f)
 
-    # Rund the command
+    # Run the command
     if args['mark']:
         mark_milestone(f, args['<commit_msg>'])
     elif args['show']:
