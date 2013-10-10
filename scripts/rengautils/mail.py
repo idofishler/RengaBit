@@ -59,7 +59,7 @@ def send_mail(sender, to, subject=None, message=None, atachment_path=None):
 
     # add msg text to body
     if message:
-        msg_text = MIMEText(message, 'plain')
+        msg_text = MIMEText(message.encode('utf-8'), 'plain')
         outer.attach(msg_text)
     outer.attach(msg)
     # Now send the message

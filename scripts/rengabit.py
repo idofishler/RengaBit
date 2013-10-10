@@ -439,7 +439,7 @@ def report_issue():
 
 
 def deal_with_spaces(string):
-    return '"' + string + '"'
+    return '"' + string.encode('utf-8') + '"'
 
 
 def main():
