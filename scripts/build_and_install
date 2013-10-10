@@ -1,0 +1,4 @@
+rm -Rf build/ dist/
+python setup.py py2app
+rm -Rf ~/.cg/dist/rengabit.app
+cp -R dist/rengabit.app ~/.cg/dist/
