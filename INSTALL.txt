@@ -17,3 +17,10 @@ How to install RengaBit client on windows:
 3.  Run C:\RengaBit\install.bat
 	a.  Don't worry about the registry alerts. (They simply add the the right-click option menu)
 	b.  We ask for you name and email. We really don't keep them. (They will be shown on milestones that you create)
+
+How to install RengaBit client on mac osx:
+------------------------------------------
+1. Download and install git form: http://git-scm.com/download/mac
+2. Run the RengaBit-Alpha-0.x.x.pkg file and install RengaBit.
+3. Run the script provided "post_install.sh". (you can open with Applications -> Utils -> Terminal)
+	a. We might ask for you name and email. We really don't keep them. (They will be shown on milestones that you create)
