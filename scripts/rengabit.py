@@ -83,7 +83,7 @@ def add_file_or_folder(file_path):
     if os.path.isdir(file_path):
         run_command('git add .')
     else:
-        run_command("git add " + deal_with_spaces(file_path))
+        run_command("git add " + str_fix(file_path))
 
 
 def ask_for_comment():
@@ -199,13 +199,14 @@ def get_revs(file_path):
     }
 
     """
-    res = run_command('git log --reverse --format=%H,%cn,%ct,%s ' + deal_with_spaces(file_path))
-    revs_list = str(res.decode("utf-8").rstrip()).split("\n")
+    res = run_command(
+        'git log --reverse --format=%H,%cn,%ct,%s ' + str_fix(file_path))
+    revs_list = str(res.rstrip()).split("\n")
     result = []
-    deli = ","
+    dl = ","
     for rev_str in revs_list:
         rev_dict = dict(
-            zip(["sha1", "commiter", "date", "commit_msg"], rev_str.split(deli)))
+            zip(["sha1", "commiter", "date", "commit_msg"], rev_str.split(dl)))
         result.append(rev_dict)
     return result
 
@@ -302,7 +303,7 @@ def mark_milestone(file_path, commit_msg=None):
     # git add
     add_file_or_folder(file_path)
     # git commit
-    ok = run_command("git commit -m " + deal_with_spaces(commit_msg))
+    ok = run_command("git commit -m " + str_fix(commit_msg))
     if ok:
         if osx():
             # change the file/folder's icon
@@ -326,7 +327,8 @@ def show_milestones(file_path):
             logger.debug("No git repo here!")
             alert("There are no milestones for this file")
             return
-        monitored = run_command("git ls-files " + deal_with_spaces(file_path) + " --error-unmatch")
+        monitored = run_command(
+            "git ls-files " + str_fix(file_path) + " --error-unmatch")
         if not monitored:
             logger.debug("This file(s) is(are) not being monitored!")
             alert("There are no milestones for this file")
@@ -335,7 +337,8 @@ def show_milestones(file_path):
         mls_dir = prepare_mile_stone_dir(file_path)
         # copy current file or folder to milestones folder
         copy_to_dir(file_path, mls_dir, "current")  # save file with _current
-        backup = copy_to_dir(file_path, mls_dir)  # save file's uncommitted changes
+        # save file's uncommitted changes
+        backup = copy_to_dir(file_path, mls_dir)
         # find revision for this file where the file has been touched
         revs = get_revs(file_path)
         # write to file - for later use (return to milestone)
@@ -343,7 +346,7 @@ def show_milestones(file_path):
         for i, rev in enumerate(revs):
             # get this file revision
             run_command("git checkout " + rev[
-                        'sha1'] + " -- " + deal_with_spaces(file_path))
+                        'sha1'] + " -- " + str_fix(file_path))
             # copy revision to the milestones folder
             new_file = copy_to_dir(file_path, mls_dir, i + 1)
             if osx():
@@ -359,7 +362,7 @@ def show_milestones(file_path):
         pass
         # clean up...
         # get orignal file to the last revision
-        run_command("git checkout HEAD -- " + deal_with_spaces(file_path))
+        run_command("git checkout HEAD -- " + str_fix(file_path))
         # restore uncommited changes
         if (os.path.isdir(file_path)):
             delete(file_path)  # special handeling for folder
@@ -402,13 +405,14 @@ def return_to_milestone(file_path, revision=None):
     org_file = os.path.join(os.path.dirname(mls_folder), org_file_name)
     sha1 = rev["sha1"]
     # put the file in it's place
-    run_command("git checkout " + sha1 + " -- " + deal_with_spaces(org_file))
+    run_command("git checkout " + sha1 + " -- " + str_fix(org_file))
     # commit the return to milestone
     if osx():
         cmt_msg = "Return to: " + rev["commit_msg"]
     else:
         cmt_msg = "Return to- " + rev["commit_msg"]
-    run_command("git commit -m " + deal_with_spaces(cmt_msg) + " -- " + deal_with_spaces(org_file))
+    run_command("git commit -m " + str_fix(
+        cmt_msg) + " -- " + str_fix(org_file))
     if osx():
         # change commnet
         change_file_comment(org_file, rev["commit_msg"])
@@ -438,7 +442,7 @@ def report_issue():
     alert("Thanks. The issue report has been sent.\nWe'll fix it ASAP!")
 
 
-def deal_with_spaces(string):
+def str_fix(string):
     return '"' + string.encode('utf-8') + '"'
 
 

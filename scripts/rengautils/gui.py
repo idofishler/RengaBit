@@ -15,7 +15,7 @@ class RengaGui(Tkinter.Tk):
         self.mainframe.columnconfigure(0, weight=2)
         self.mainframe.rowconfigure(0, weight=1)
         self.resizable(False, False)
-        self.font = ('Open Sans', 16)
+        self.font = ('Open Sans', 14)
 
     def center(self):
         self.update_idletasks()
@@ -62,7 +62,11 @@ class RengaGui(Tkinter.Tk):
         self.bring_to_front()
 
     def issue_report(self):
-        info = 'Thanks for helping us improve RengaBit.\nPlease let us know what was the problem (short text is enough)\nIf you want us to contect you, sign with you name and email'
+        info = '''
+        Thanks for helping us improve RengaBit.
+        Please let us know what was the problem (short text is enough)
+        If you want us to contect you, sign with you name and email
+        '''
         ttk.Label(self.mainframe, font=self.font, text=info).grid(
             column=0, row=0, sticky="W")
         self.cmt = Tkinter.Text(
