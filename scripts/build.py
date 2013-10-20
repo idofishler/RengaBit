@@ -3,7 +3,7 @@
 RengaBit - collaborative creation, just a right click away
 
 Usage:
-    build.py compile
+    build.py compile (py2app | py2exe)
     build.py pack
     build.py upload
     build.py (-h | --help)
@@ -23,6 +23,7 @@ import zipfile
 import shlex
 from subprocess import check_output, CalledProcessError
 from docopt import docopt
+import boto
 
 logger = logging.getLogger(__name__)
 version = 'RengaBit-ALPHA-0.2.1'
@@ -30,6 +31,14 @@ version = 'RengaBit-ALPHA-0.2.1'
 
 def osx():
     return sys.platform == 'darwin'
+
+pwd = os.getcwd()
+parent = os.path.dirname(pwd)
+out_dir = os.path.join(parent, 'build')
+if osx():
+    out = os.path.join(out_dir, 'RengaBit.dmg')
+else:
+    out = os.path.join(out_dir, 'RengaBit.zip')
 
 
 def config_logger():
@@ -126,11 +135,9 @@ def zip(src, dst):
 
 
 def pack():
-    pwd = os.getcwd()
-    parent = os.path.dirname(pwd)
     if osx():
         # get files
-        pkg = os.path.join(parent, 'build', version + '.pkg')
+        pkg = os.path.join(out_dir, version + '.pkg')
         txt = os.path.join(parent, 'INSTALL.txt')
         csh = os.path.join(parent, 'post_install.sh')
         tmp = os.path.join(parent, 'tmp')
@@ -145,7 +152,7 @@ def pack():
         run_command('hdiutil convert ../build/RengaBit_tmp.dmg -format UDZO -o ../build/RengaBit.dmg')
         # delete tmp folder
         delete(tmp)
-        delete(os.path.join(parent, 'build', 'RengaBit_tmp.dmg'))
+        delete(os.path.join(out_dir, 'RengaBit_tmp.dmg'))
     else:
         dst = os.path.join(parent, 'build', version)
         zip('dist', dst)
@@ -156,7 +163,17 @@ def pack():
 
 
 def uplaod():
-    pass
+    s3 = boto.connect_s3()
+    logger.debug("Connected to S3")
+    bucket = s3.get_bucket('rengabit')
+    logger.debug("Connected to bucket %s", bucket)
+    from boto.s3.key import Key
+    k = Key(bucket)
+    k.key = 'public/' + os.path.basename(out)
+    logger.debug("Uploading %s as %s", *(out, k.key))
+    k.set_contents_from_filename(out)
+    k.set_acl('public-read')
+    logger.debug("Upload done sucssesfuly.")
 
 
 def build():
@@ -175,7 +192,7 @@ def main():
     if args['pack']:
         pack()
     if args['upload']:
-        uplaod()  # TODO
+        uplaod()
 
 
 if __name__ == '__main__':
