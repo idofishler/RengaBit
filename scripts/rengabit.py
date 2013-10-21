@@ -23,7 +23,7 @@ Options:
 import logging
 import os
 from subprocess import check_output, CalledProcessError
-from rengautils import gui, mail, browser
+from rengautils import gui, mail, browser, path
 from docopt import docopt
 import sys
 import shutil
@@ -36,7 +36,6 @@ def osx():
 
 if osx():
     from rengautils import macbrg
-
 
 if osx():
     renga_path = os.path.join(os.environ['HOME'], ".cg")
@@ -64,6 +63,7 @@ def config_logger(args):
     handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
+    path.config_logger(debug=debug, log_file=renga_log_file)
 
 
 def check_reop():
@@ -125,9 +125,7 @@ def prepare_mile_stone_dir(file_path):
     it will be removed and a new one will be created
     """
     milesones_dir = file_path + "_milestones"
-    if os.path.exists(milesones_dir):
-        shutil.rmtree(milesones_dir)
-    os.makedirs(milesones_dir)
+    path.mkdir(milesones_dir, override=True)
     logger.debug("created milestones directory at: %s", milesones_dir)
     return milesones_dir
 
@@ -151,34 +149,6 @@ def copy_to_dir(file_path, dest_dir, ver=None):
     else:
         shutil.copy2(file_path, dst)
     return dst
-
-
-def onerror(func, path, exc_info):
-    """
-    Error handler for ``shutil.rmtree``.
-
-    If the error is due to an access error (read only file)
-    it attempts to add write permission and then retries.
-
-    If the error is for another reason it re-raises the error.
-
-    Usage : ``shutil.rmtree(path, onerror=onerror)``
-    """
-    import stat
-    if not os.access(path, os.W_OK):
-        # Is the error an access error ?
-        os.chmod(path, stat.S_IWUSR)
-        func(path)
-    else:
-        raise
-
-
-def delete(path):
-    logger.debug("Deleting %s", path)
-    if os.path.isdir(path):
-        shutil.rmtree(path, onerror=onerror)
-    else:
-        os.remove(path)
 
 
 def change_file_name(file_name, ver):
@@ -297,18 +267,6 @@ def run_command(cmd):
         return False
 
 
-def change_dir(f_path):
-    """change directory to file's or folder's directory"""
-    if os.path.isdir(f_path):
-        os.chdir(f_path)
-        logger.debug("filepath is a directory")
-        logger.debug("Changed directory to: %s", f_path)
-    else:
-        os.chdir(os.path.dirname(f_path))
-        logger.debug("filepath is a file")
-        logger.debug("Changed directory to: %s", os.path.dirname(f_path))
-
-
 def mark_milestone(file_path, commit_msg=None):
     """
     Will create git repository (if nedded), add the relevant
@@ -393,7 +351,7 @@ def show_milestones(file_path):
             run_command("git stash pop")
         else:
             copy_to_dir(backup, os.getcwd())
-            delete(backup)
+            path.delete(backup)
         if osx():
             # restore icon
             macbrg.change_icon(file_path)
@@ -425,7 +383,7 @@ def return_to_milestone(file_path):
     logger.debug("return to rev:\n%s", rev)
     org_file = os.path.join(os.path.dirname(mls_folder), org_file_name)
     # change directory to original file is inportant for folders case.
-    change_dir(org_file)
+    path.change_dir(org_file)
     sha1 = rev["sha1"]
     # put the file in it's place
     run_command("git checkout " + sha1 + " -- " + str_fix(org_file))
@@ -442,7 +400,7 @@ def return_to_milestone(file_path):
         # restore icon
         macbrg.change_icon(org_file)
     # clean milestone folder
-    delete(mls_folder)
+    path.delete(mls_folder)
 
 
 def share(file_path, debug=False):
@@ -477,7 +435,7 @@ def main():
     f = None
     if args['<filepath>']:
         f = os.path.realpath(os.path.expanduser(args['<filepath>']))
-        change_dir(f)
+        path.change_dir(f)
 
     # Run the command
     if args['mark']:

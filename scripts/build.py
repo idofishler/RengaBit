@@ -3,7 +3,7 @@
 RengaBit - collaborative creation, just a right click away
 
 Usage:
-    build.py compile (py2app | py2exe)
+    build.py (py2app | py2exe)
     build.py pack
     build.py upload
     build.py (-h | --help)
@@ -18,12 +18,12 @@ Options:
 import logging
 import sys
 import os
-import shutil
 import zipfile
 import shlex
 from subprocess import check_output, CalledProcessError
 from docopt import docopt
 import boto
+from rengautils import path
 
 logger = logging.getLogger(__name__)
 version = 'RengaBit-ALPHA-0.2.1'
@@ -49,28 +49,7 @@ def config_logger():
     handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-
-
-def mkdir(path, override=False):
-    if os.path.exists(path):
-        if override:
-            shutil.rmtree(path)
-        else:
-            return
-    os.makedirs(path)
-    logger.debug("created directory at: %s", path)
-
-
-def copy_to_dir(file_path, dest_dir):
-    """Copy file or folder to dest_dir"""
-    new_name = os.path.basename(file_path)
-    dst = os.path.join(dest_dir, new_name)
-    logger.debug("copying %s to %s", *(file_path, dst))
-    if os.path.isdir(file_path):
-        shutil.copytree(file_path, dst)
-    else:
-        shutil.copy2(file_path, dst)
-    return dst
+    path.config_logger(debug=True)
 
 
 def run_command(cmd):
@@ -89,17 +68,9 @@ def run_command(cmd):
         return False
 
 
-def delete(path):
-    if os.path.exists(path):
-        if os.path.isdir(path):
-            shutil.rmtree(path)
-        else:
-            os.remove(path)
-
-
 def cleanup():
-    delete('dist')
-    delete('build')
+    path.delete('dist')
+    path.delete('build')
 
 
 def build_osx():
@@ -122,7 +93,7 @@ def build_win():
 
 
 def zip(src, dst):
-    zf = zipfile.ZipFile("%s.zip" % (dst), "w")
+    zf = zipfile.ZipFile("%s.zip" % (dst), "w", zipfile.ZIP_DEFLATED)
     abs_src = os.path.abspath(src)
     for dirname, subdirs, files in os.walk(src):
         for filename in files:
@@ -135,31 +106,42 @@ def zip(src, dst):
 
 
 def pack():
+    # create a temp folder
+    tmp = os.path.join(parent, 'tmp')
+    path.mkdir(tmp, override=True)
+    # get files common files
+    txt = os.path.join(parent, 'INSTALL.txt')
+    path.copy_to_dir(txt, tmp)
     if osx():
-        # get files
+        # get mac files
         pkg = os.path.join(out_dir, version + '.pkg')
-        txt = os.path.join(parent, 'INSTALL.txt')
         csh = os.path.join(parent, 'post_install.sh')
-        tmp = os.path.join(parent, 'tmp')
-        # create a temp folder
-        mkdir(tmp, override=True)
         # copy files to temp folder
-        copy_to_dir(pkg, tmp)
-        copy_to_dir(txt, tmp)
-        copy_to_dir(csh, tmp)
+        path.copy_to_dir(pkg, tmp)
+        path.copy_to_dir(csh, tmp)
         # make dmg
         run_command('hdiutil create ../build/RengaBit_tmp.dmg -ov -volname "RengaBit" -fs HFS+ -srcfolder "../tmp/"')
         run_command('hdiutil convert ../build/RengaBit_tmp.dmg -format UDZO -o ../build/RengaBit.dmg')
-        # delete tmp folder
-        delete(tmp)
-        delete(os.path.join(out_dir, 'RengaBit_tmp.dmg'))
+        # clean temp files
+        path.delete(os.path.join(out_dir, 'RengaBit_tmp.dmg'))
     else:
-        dst = os.path.join(parent, 'build', version)
-        zip('dist', dst)
-        #zip(os.path.join('lib', 'chromedriver.exe'), dst)
-        #zip(os.path.join(parent, 'renga_win_client', 'install.bat'), dst)
-        #zip(os.path.join(parent, 'renga_win_client', 'rengaReg.reg'), dst)
-        #zip(os.path.join(parent, 'INSTALL.txt'), dst)
+        # get win files
+        dist = 'dist'
+        bat = os.path.join(parent, 'renga_win_client', 'install.bat')
+        reg = os.path.join(parent, 'renga_win_client', 'rengaReg.reg')
+        lib = os.path.join('lib', 'chromedriver.exe')
+        # copy files to temp folder
+        path.copy_to_dir(dist, tmp)
+        path.copy_to_dir(bat, tmp)
+        path.copy_to_dir(reg, tmp)
+        dest_lib = os.path.join(tmp, 'lib')
+        path.mkdir(dest_lib)
+        path.copy_to_dir(lib, dest_lib)
+        # make zip
+        out_name, ext = os.path.splitext(out)
+        zip(tmp, out_name)
+    # delete tmp folder
+    path.delete(tmp)
 
 
 def uplaod():
@@ -186,7 +168,7 @@ def build():
 def main():
     args = docopt(__doc__, version=version)
     config_logger()
-    if args['compile']:
+    if args['py2app'] or args['py2exe']:
         cleanup()
         build()
     if args['pack']:
