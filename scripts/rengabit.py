@@ -153,9 +153,30 @@ def copy_to_dir(file_path, dest_dir, ver=None):
     return dst
 
 
+def onerror(func, path, exc_info):
+    """
+    Error handler for ``shutil.rmtree``.
+
+    If the error is due to an access error (read only file)
+    it attempts to add write permission and then retries.
+
+    If the error is for another reason it re-raises the error.
+
+    Usage : ``shutil.rmtree(path, onerror=onerror)``
+    """
+    import stat
+    if not os.access(path, os.W_OK):
+        # Is the error an access error ?
+        os.chmod(path, stat.S_IWUSR)
+        func(path)
+    else:
+        raise
+
+
 def delete(path):
+    logger.debug("Deleting %s", path)
     if os.path.isdir(path):
-        shutil.rmtree(path)
+        shutil.rmtree(path, onerror=onerror)
     else:
         os.remove(path)
 
@@ -172,9 +193,9 @@ def change_file_name(file_name, ver):
 
 
 def add_comment_for_windows(file_path, comment):
-    """Copy file or folder to mls_dir with the name <file>_<ver>.<ext>"""
+    """Adding the comment in the file name. exmaple: <file> - <comment>.<ext>"""
     file_name, ext = os.path.splitext(file_path)
-    new_path = file_name + "_" + comment + ext
+    new_path = file_name + " - " + comment + ext
     os.rename(file_path, new_path)
     logger.debug("changes name of %s to %s", *(file_path, new_path))
     return new_path
@@ -338,7 +359,10 @@ def show_milestones(file_path):
         # copy current file or folder to milestones folder
         copy_to_dir(file_path, mls_dir, "current")  # save file with _current
         # save file's uncommitted changes
-        backup = copy_to_dir(file_path, mls_dir)
+        if os.path.isdir(file_path):
+            run_command("git stash")
+        else:
+            backup = copy_to_dir(file_path, mls_dir)  # in mac I lose the icon for a file if I stash
         # find revision for this file where the file has been touched
         revs = get_revs(file_path)
         # write to file - for later use (return to milestone)
@@ -354,7 +378,7 @@ def show_milestones(file_path):
                 # modifiy the file comment acorrding to it's commit message
                 change_file_comment(new_file, comment)
             else:
-                comment = " " + rev["commiter"] + "- " + rev["commit_msg"]
+                comment = rev["commiter"] + " - " + rev["commit_msg"]
                 new_file = add_comment_for_windows(new_file, comment)
             # modifiy the file "last modified" according to commit time
             os.utime(new_file, (int(rev["date"]), int(rev["date"])))
@@ -364,9 +388,9 @@ def show_milestones(file_path):
         # get orignal file to the last revision
         run_command("git checkout HEAD -- " + str_fix(file_path))
         # restore uncommited changes
-        if (os.path.isdir(file_path)):
-            delete(file_path)  # special handeling for folder
-            shutil.move(backup, os.path.dirname(file_path))
+        if os.path.isdir(file_path):
+            # special handeling for folder
+            run_command("git stash pop")
         else:
             copy_to_dir(backup, os.getcwd())
             delete(backup)
@@ -375,10 +399,19 @@ def show_milestones(file_path):
             macbrg.change_icon(file_path)
 
 
-def return_to_milestone(file_path, revision=None):
+def brake_file(file_path):
+    file_name, ext = os.path.splitext(os.path.basename(file_path))
+    if not osx():
+        file_name = file_name.rsplit(" - ", 2)[0]  # remove comments form file name in win
+    revision = file_name.rsplit("_", 1)[1]
+    org_file_name = file_name.rsplit("_", 1)[0] + ext
+    return org_file_name, revision
+
+
+def return_to_milestone(file_path):
     """
-    Return to milestome with revision number. if revison is not provided,
-    the revision number will be extracted from the file name.
+    Return to milestome with revision number. The revision is expected
+    to be on the file name as: <file_name>_<rev>.<ext>
     """
     logger.debug("return to milestone of: %s", file_path)
     mls_folder = os.path.dirname(file_path)
@@ -387,22 +420,12 @@ def return_to_milestone(file_path, revision=None):
         logger.warning("no %s meta file here", meta_file_name)
         alert("This is not a milestome of any file or folder")
         return
-    file_name, ext = os.path.splitext(os.path.basename(file_path))
-    if not revision:
-        # get the revision number from the file name
-        if(osx()):
-            revision = file_name.rsplit("_", 1)[1]
-        else:
-            revision = file_name.split("_")[1]
-
+    org_file_name, revision = brake_file(file_path)
     rev = get_revs_form_meta_file(meta_file)[int(revision) - 1]
     logger.debug("return to rev:\n%s", rev)
-    # get the original file name ()
-    if osx():
-        org_file_name = file_name.rsplit("_", 1)[0] + ext
-    else:
-        org_file_name = file_name.split("_")[0] + ext
     org_file = os.path.join(os.path.dirname(mls_folder), org_file_name)
+    # change directory to original file is inportant for folders case.
+    change_dir(org_file)
     sha1 = rev["sha1"]
     # put the file in it's place
     run_command("git checkout " + sha1 + " -- " + str_fix(org_file))
@@ -410,7 +433,7 @@ def return_to_milestone(file_path, revision=None):
     if osx():
         cmt_msg = "Return to: " + rev["commit_msg"]
     else:
-        cmt_msg = "Return to- " + rev["commit_msg"]
+        cmt_msg = "Return to " + rev["commit_msg"]
     run_command("git commit -m " + str_fix(
         cmt_msg) + " -- " + str_fix(org_file))
     if osx():
@@ -462,7 +485,7 @@ def main():
     elif args['show']:
         show_milestones(f)
     elif args['return']:
-        return_to_milestone(f, args["--rev"])
+        return_to_milestone(f)
     elif args['share']:
         share(f, args['--debug'])
     elif args['report']:
