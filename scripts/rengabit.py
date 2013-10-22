@@ -456,7 +456,12 @@ def main():
         elif args['report']:
             report_issue()
     except Exception as e:
-        logger.error(e)
+        alert('''An unexpected error occured. Sorry :(
+
+Please help us improve RengaBit by using the "report issue" button
+you can also email us directly to info@rengabit.com''')
+        logger.exception("Unexpected exception: %s", e)
+
 
 if __name__ == '__main__':
     main()
