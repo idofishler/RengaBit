@@ -4,7 +4,7 @@ RengaBit - collaborative creation, just a right click away
 
 Usage:
     build.py (py2app | py2exe)
-    build.py pack
+    build.py pack [(-l | --local_install)]
     build.py upload
     build.py (-h | --help)
     build.py --version
@@ -89,7 +89,7 @@ def build_osx():
 def build_win():
     from distutils.core import setup
     import py2exe
-    setup(console=['rengabit.py'])
+    setup(windows=['rengabit.py'])
 
 
 def zip(src, dst):
@@ -105,7 +105,7 @@ def zip(src, dst):
     zf.close()
 
 
-def pack():
+def pack(install_local=False):
     # create a temp folder
     tmp = os.path.join(parent, 'tmp')
     path.mkdir(tmp, override=True)
@@ -124,6 +124,10 @@ def pack():
         run_command('hdiutil convert ../build/RengaBit_tmp.dmg -format UDZO -o ../build/RengaBit.dmg')
         # clean temp files
         path.delete(os.path.join(out_dir, 'RengaBit_tmp.dmg'))
+        if install_local:
+            install_app = '~/.cg/dist/rengabit.app'
+            path.delete(install_app)
+            path.copy_to_dir('dist/rengabit.app', '~/.cg/')
     else:
         # get win files
         dist = 'dist'
@@ -140,6 +144,12 @@ def pack():
         # make zip
         out_name, ext = os.path.splitext(out)
         zip(tmp, out_name)
+        if install_local:
+            root = os.path.splitdrive(sys.executable)
+            renga_folder = os.path.join(root, 'RengaBit')
+            install_dist = os.path.join(renga_folder, 'dist')
+            path.delete(install_dist)
+            path.copy_to_dir(dist, install_dist)
     # delete tmp folder
     path.delete(tmp)
 
@@ -172,7 +182,7 @@ def main():
         cleanup()
         build()
     if args['pack']:
-        pack()
+        pack(install_local=args['-l'])
     if args['upload']:
         uplaod()
 

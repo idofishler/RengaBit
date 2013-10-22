@@ -22,7 +22,7 @@ Options:
 
 import logging
 import os
-from subprocess import check_output, CalledProcessError
+import subprocess
 from rengautils import gui, mail, browser, path
 from docopt import docopt
 import sys
@@ -174,7 +174,7 @@ def add_comment_for_windows(file_path, comment):
 def change_file_comment(file_path, comment):
     cmd = [change_file_comment_script, file_path, comment]
     logger.debug(' '.join(cmd))
-    res = check_output(cmd)
+    res = subprocess.check_output(cmd)
     logger.debug(res)
 
 
@@ -259,10 +259,16 @@ def run_command(cmd):
     try:
         logger.debug(cmd)
         cmd_list = shlex.split(cmd)
-        res = check_output(cmd_list)
+        startupinfo = None
+        if not osx():
+            import _subprocess  # @bug with python 2.7 ?
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= _subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = _subprocess.SW_HIDE
+        res = subprocess.check_output(cmd_list, startupinfo=startupinfo)
         logger.debug(res)
         return res
-    except CalledProcessError as e:
+    except subprocess.CalledProcessError as e:
         logger.warning(e)
         return False
 
@@ -437,17 +443,20 @@ def main():
         f = os.path.realpath(os.path.expanduser(args['<filepath>']))
         path.change_dir(f)
 
-    # Run the command
-    if args['mark']:
-        mark_milestone(f, args['<commit_msg>'])
-    elif args['show']:
-        show_milestones(f)
-    elif args['return']:
-        return_to_milestone(f)
-    elif args['share']:
-        share(f, args['--debug'])
-    elif args['report']:
-        report_issue()
+    try:
+        # Run the command
+        if args['mark']:
+            mark_milestone(f, args['<commit_msg>'])
+        elif args['show']:
+            show_milestones(f)
+        elif args['return']:
+            return_to_milestone(f)
+        elif args['share']:
+            share(f, args['--debug'])
+        elif args['report']:
+            report_issue()
+    except Exception as e:
+        logger.error(e)
 
 if __name__ == '__main__':
     main()
