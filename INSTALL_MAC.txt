@@ -1,0 +1,15 @@
+RengaBit - Creative collaboration
+=================================
+RengaBit allows you to simply work, we keep track of 
+the process for you. It’s a sub-version management system,
+your work process doesn't change.
+
+VERSION: RengaBit-ALPHA-0.2.1
+
+--------------------------------
+Before installing RengaBit Alpha:
+--------------------------------
+1. Download and install git form: http://git-scm.com/download/mac
+2. Run the RengaBit-Alpha-0.x.x.pkg file and install RengaBit.
+3. Run the script provided "post_install.sh". (you can open with Applications -> Utils -> Terminal)
+	a. We might ask for you name and email. We really don't keep them. (They will be shown on milestones that you create)

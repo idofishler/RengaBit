@@ -1,0 +1,20 @@
+RengaBit - Creative collaboration
+=================================
+RengaBit allows you to simply work, we keep track of 
+the process for you. It’s a sub-version management system,
+your work process doesn't change.
+
+VERSION: RengaBit-ALPHA-0.2.1
+
+--------------------------------
+Before installing RengaBit Alpha:
+--------------------------------
+Download and install git from: http://git-scm.com/download/win
+1.  In git setup choose:
+	a. Disable explorer integration - you don't need it.
+	b. Adjusting your PATH environment: 
+	   Choose: Run Git From The Windows Command Prompt.
+  
+ Note: After installation you should be able to open cmd prompt (WIN+R -> type: cmd, hit: ENTER) and run the command 'git' to see the usage massage. If you see an error something is wrong.
+
+

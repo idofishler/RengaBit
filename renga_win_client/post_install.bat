@@ -1,5 +1,6 @@
 @echo off
-@REGEDIT.EXE "C:\Rengabit\rengaReg.reg"
+echo RengaBit needs your name and email. We do not share your details with anyone.
+echo This is a one time thing...
 set /p id="Choose user name: " %=%
 set /p email="Enter you email please: " %=%
 @git config --global user.email "%email%"

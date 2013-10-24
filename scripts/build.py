@@ -38,7 +38,7 @@ out_dir = os.path.join(parent, 'build')
 if osx():
     out = os.path.join(out_dir, 'RengaBit.dmg')
 else:
-    out = os.path.join(out_dir, 'RengaBit.zip')
+    out = os.path.join(out_dir, 'RengaBit.exe')
 
 
 def config_logger():
@@ -89,7 +89,12 @@ def build_osx():
 def build_win():
     from distutils.core import setup
     import py2exe
-    setup(windows=['rengabit.py'])
+    icon_file = os.path.join(out_dir, 'RengaBit.ico')
+    OPTIONS = {
+        "script": "rengabit.py",
+        "icon_resources": [(1, icon_file)]
+    }
+    setup(windows=[OPTIONS])
 
 
 def zip(src, dst):
@@ -106,20 +111,20 @@ def zip(src, dst):
 
 
 def pack(install_local=False):
-    # create a temp folder
-    tmp = os.path.join(parent, 'tmp')
-    path.mkdir(tmp, override=True)
-    # get files common files
-    txt = os.path.join(parent, 'INSTALL.txt')
-    path.copy_to_dir(txt, tmp)
     if osx():
+        # create a temp folder
+        tmp = os.path.join(parent, 'tmp')
+        path.mkdir(tmp, override=True)
+        txt = os.path.join(parent, 'INSTALL_MAC.txt')
         # get mac files
         pkg = os.path.join(out_dir, version + '.pkg')
         csh = os.path.join(parent, 'post_install.sh')
         # copy files to temp folder
         path.copy_to_dir(pkg, tmp)
         path.copy_to_dir(csh, tmp)
+        path.copy_to_dir(txt, tmp)
         # make dmg
+        path.delete(out)
         run_command('hdiutil create ../build/RengaBit_tmp.dmg -ov -volname "RengaBit" -fs HFS+ -srcfolder "../tmp/"')
         run_command('hdiutil convert ../build/RengaBit_tmp.dmg -format UDZO -o ../build/RengaBit.dmg')
         # clean temp files
@@ -128,30 +133,13 @@ def pack(install_local=False):
             install_app = '~/.cg/dist/rengabit.app'
             path.delete(install_app)
             path.copy_to_dir('dist/rengabit.app', '~/.cg/')
+        # delete tmp folder
+        path.delete(tmp)
     else:
-        # get win files
-        dist = 'dist'
-        bat = os.path.join(parent, 'renga_win_client', 'install.bat')
-        reg = os.path.join(parent, 'renga_win_client', 'rengaReg.reg')
-        lib = os.path.join('lib', 'chromedriver.exe')
-        # copy files to temp folder
-        path.copy_to_dir(dist, tmp)
-        path.copy_to_dir(bat, tmp)
-        path.copy_to_dir(reg, tmp)
-        dest_lib = os.path.join(tmp, 'lib')
-        path.mkdir(dest_lib)
-        path.copy_to_dir(lib, dest_lib)
-        # make zip
-        out_name, ext = os.path.splitext(out)
-        zip(tmp, out_name)
-        if install_local:
-            root = os.path.splitdrive(sys.executable)
-            renga_folder = os.path.join(root, 'RengaBit')
-            install_dist = os.path.join(renga_folder, 'dist')
-            path.delete(install_dist)
-            path.copy_to_dir(dist, install_dist)
-    # delete tmp folder
-    path.delete(tmp)
+        # Run inno setup
+        iss = os.path.join(out_dir, 'rengabit.iss')
+        print iss
+        run_command('iscc "' + iss + '"')
 
 
 def uplaod():

@@ -15,7 +15,7 @@ class RengaGui(Tkinter.Tk):
         self.mainframe.columnconfigure(0, weight=2)
         self.mainframe.rowconfigure(0, weight=1)
         self.resizable(False, False)
-        self.font = ('Open Sans', 14)
+        self.font = ('Open Sans', 13)
 
     def center(self):
         self.update_idletasks()
