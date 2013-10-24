@@ -101,6 +101,20 @@ def ask_for_comment():
         return None
 
 
+def ask_for_cred(username, email):
+    """
+    Show a gui that ask for username and email
+
+    """
+    app = gui.RengaGui(None)
+    app.ask_for_cred(username, email)
+    app.mainloop()
+    try:
+        return app.result
+    except AttributeError:
+        return None
+
+
 def ask_for_issue_cmt():
     app = gui.RengaGui(None)
     app.issue_report()
@@ -419,7 +433,8 @@ def share(file_path, debug=False):
 
 def report_issue():
     sub = "RengaBit client: Issue report"
-    sender = "pilot@rengabit.com"  # TODO get the user's email
+    user_email = run_command('git config --get user.email')
+    sender = user_email
     msg = ask_for_issue_cmt()
     if not msg:
         return
@@ -433,17 +448,33 @@ def str_fix(string):
     return '"' + string.encode('utf-8') + '"'
 
 
+def first_time_check():
+    # git global setting set if needed
+    username = run_command('git config --get user.name')
+    email = run_command('git config --get user.email')
+    if not username or not email:
+        new_user, new_email = ask_for_cred(username, email)
+        run_command('git config --global user.name  "' + new_user + '"')
+        run_command('git config --global user.email  "' + new_email + '"')
+        alert("Username and email set. This is a one time thing")
+        return True
+    # clean log if needed
+    # send info to user db
+
+
 def main():
     args = docopt(__doc__, version='RengaBit-ALPHA-0.2.1')
     config_logger(args)
     logger.debug(args)
-    # Run a command according to the given arguments
-    f = None
-    if args['<filepath>']:
-        f = os.path.realpath(os.path.expanduser(args['<filepath>']))
-        path.change_dir(f)
-
+    if first_time_check():
+        return
     try:
+        # Run a command according to the given arguments
+        f = None
+        if args['<filepath>']:
+            f = os.path.realpath(os.path.expanduser(args['<filepath>']))
+            path.change_dir(f)
+
         # Run the command
         if args['mark']:
             mark_milestone(f, args['<commit_msg>'])
@@ -461,7 +492,10 @@ def main():
 Please help us improve RengaBit by using the "report issue" button
 you can also email us directly to info@rengabit.com''')
         logger.exception("Unexpected exception: %s", e)
-
+        try:
+            report_issue()
+        except:
+            return
 
 if __name__ == '__main__':
     main()

@@ -17,20 +17,6 @@ sudo mv -f ~/.cg/launchd.conf /etc/
 egrep -v '^\s*#' /etc/launchd.conf | launchctl # apply now!
 echo "Fixed PATH for non command line apps"
 
-# git global config
-set e_user = `git config --get user.name`
-if ($#e_user == 0) then
-	echo "Please choose a username: "
-	set username = $<
-	git config --global user.name "$username"
-endif
-set e_email = `git config --get user.email`
-if ($#e_email == 0) then
-	echo "Enter you email please: "
-	set email = $<
-	git config --global user.email "$email"
-endif
-
 echo "Thanks for installing RengaBit."
 echo "Please restart your computer before using RengaBit."
 

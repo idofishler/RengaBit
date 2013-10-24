@@ -29,6 +29,10 @@ class RengaGui(Tkinter.Tk):
         self.result = self.cmt.get()
         self.quit()
 
+    def get_cred(self, event=None):
+        self.result = self.username.get(), self.email.get()
+        self.quit()
+
     def get_text(self):
         self.result = self.cmt.get('1.0', 'end')
         self.quit()
@@ -50,6 +54,33 @@ class RengaGui(Tkinter.Tk):
         self.entry.grid(column=0, row=1, columnspan=4, sticky="EW")
         self.entry.focus_set()
         self.entry.bind("<Return>", lambda e: self.done())
+        self.bring_to_front()
+
+    def ask_for_cred(self, username, email):
+        ttk.Label(self.mainframe, font=self.font, text="First time using RengaBit?\nPlease fill in the following details").grid(
+            column=0, row=0, columnspan=6, sticky="W")
+        ttk.Button(self.mainframe, text="OK", command=self.get_cred).grid(
+            column=5, row=3, sticky="E")
+        # TODO add username and email as place hoders if exists...
+        self.username = Tkinter.StringVar()
+        self.email = Tkinter.StringVar()
+        self.user_entry = ttk.Entry(
+            self.mainframe, font=self.font, textvariable=self.username)
+        if username:
+            self.user_entry.insert(0, username)
+        self.email_entry = ttk.Entry(
+            self.mainframe, font=self.font, width=30, textvariable=self.email)
+        if email:
+            self.email_entry.insert(0, email)
+        ttk.Label(self.mainframe, font=self.font, text="Username: ").grid(
+            column=0, row=1, sticky="WE")
+        ttk.Label(self.mainframe, font=self.font, text="Email: ").grid(
+            column=0, row=2, sticky="WE")
+        self.user_entry.grid(column=1, row=1, columnspan=5, sticky="WE")
+        self.email_entry.grid(column=1, row=2, columnspan=5, sticky="WE")
+        self.user_entry.focus_set()
+        self.user_entry.bind("<Return>", lambda e: self.get_cred())
+        self.email_entry.bind("<Return>", lambda e: self.get_cred())
         self.bring_to_front()
 
     def alert(self, msg):
